@@ -1,360 +1,749 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-// --- DATA EXTRACTED FROM PDF ---
+// --- DATA EXTRACTED FROM PDF QUOTES ---
 const budgetData = {
-    "proposition": {
-        "id": "proposition",
-        "name": "KPMG - Cinquième Sens",
-        "totalTTC": 3852.50,
-        "totalHT": 3210.42,
-        "honorairesHT": 152.88,
-        "paxCount": 50,
-        "categories": {
-            "lieux": 1469.94,
-            "reunions": 1587.60,
-            "extras": 0.0,
-            "accompagnement": 0.0
-        },
-        "details": {
-            "lieux": [
-                {
-                    "desc": "Location de salle - Cœur Défense",
-                    "price": 1469.94,
-                    "tva": 293.99,
-                    "ttc": 1763.93,
-                    "subDesc": "Accessibilité PMR\nPrivatisation d'une salle 110m², matériel audiovisuel inclus\n<span class='bg-yellow-100 px-1 font-bold text-gray-900 rounded'>Remises de 330€</span> - 1h d'exploitation offerte (1469.94€ au lieu de 1799.94€)"
-                }
-            ],
-            "reunions": [
-                {
-                    "desc": "Atelier Création de parfum - 2h00",
-                    "price": 1587.60,
-                    "tva": 317.52,
-                    "ttc": 1905.12,
-                    "subDesc": "2 Animateurs parfumeurs pour 50 pax\nFormat : 2h00\nDéplacement dans le lieux de votre choix\n<span class='bg-yellow-100 px-1 font-bold text-gray-900 rounded'>Remise de 30€</span> - <span class='bg-yellow-100 px-1 font-bold text-gray-900 rounded'>Une réduction de 10% (rétroactive)</span> à partir de la 5ème opération réalisée avec Cinquième Sens sur les trois prochaines années"
-                }
-            ],
-            "extras": [
-                {
-                    "desc": "Flacon vaporisateur 15 ml",
-                    "price": 1430.00,
-                    "tva": 286.00,
-                    "ttc": 1716.00,
-                    "isOption": true,
-                    "subDesc": "50 unités — 28,60 € / unité\nLivraison des flacons dans vos locaux sous 8 jours inclus"
-                }
-            ],
-            "accompagnement": [
-                {
-                    "desc": "Weever - forfait 1/2 journée",
-                    "price": 400.00,
-                    "tva": 80.00,
-                    "ttc": 480.00,
-                    "isOption": true,
-                    "subDesc": "Accompagnement sur place"
-                }
-            ]
-        }
+    "lot1_pullman": {
+        "id": "lot1_pullman",
+        "lot": 1,
+        "lotLabel": "Lot 1 : Hébergement",
+        "name": "Pullman La Défense",
+        "paxCount": 100,
+        "paxLabel": "100 participants max (nuitées : 40 le 21/10, 100 le 22/10)",
+        "prestationHT": 28229.60,
+        "prestationTTC": 30902.34,
+        "prestationTVA": 2672.74,
+        "honorairesHT": 1411.48,
+        "honorairesTTC": 1545.12,
+        "honorairesTVA": 133.64,
+        "totalHT": 29641.08,
+        "totalTTC": 32447.46,
+        "totalTVA": 2806.38,
+        "details": [
+            { "desc": "Nuitée 21/10 — Chambre classique single, petit-déjeuner inclus", "pu": 190.91, "qty": 40, "unit": "pax", "tva": 10, "ht": 7636.40, "ttc": 8400.04 },
+            { "desc": "Nuitée 22/10 — Chambre classique single, petit-déjeuner inclus", "pu": 190.91, "qty": 100, "unit": "pax", "tva": 10, "ht": 19091.00, "ttc": 21000.10 },
+            { "desc": "Taxe de séjour (cumulée sur 140 nuitées)", "pu": 10.73, "qty": 140, "unit": "nuitée", "tva": 0, "ht": 1502.20, "ttc": 1502.20 }
+        ]
+    },
+    "lot1_meridien": {
+        "id": "lot1_meridien",
+        "lot": 1,
+        "lotLabel": "Lot 1 : Hébergement",
+        "name": "Méridien Arc de Triomphe",
+        "paxCount": 100,
+        "paxLabel": "100 participants max (nuitées : 40 le 21/10, 100 le 22/10)",
+        "prestationHT": 33000.80,
+        "prestationTTC": 36182.58,
+        "prestationTVA": 3181.78,
+        "honorairesHT": 1650.04,
+        "honorairesTTC": 1809.13,
+        "honorairesTVA": 159.09,
+        "totalHT": 34650.84,
+        "totalTTC": 37991.71,
+        "totalTVA": 3340.87,
+        "details": [
+            { "desc": "Nuitée 21/10 — Chambre classique single, petit-déjeuner inclus", "pu": 227.27, "qty": 40, "unit": "pax", "tva": 10, "ht": 9090.80, "ttc": 9999.88 },
+            { "desc": "Nuitée 22/10 — Chambre classique single, petit-déjeuner inclus", "pu": 227.27, "qty": 100, "unit": "pax", "tva": 10, "ht": 22727.00, "ttc": 24999.70 },
+            { "desc": "Taxe de séjour (cumulée sur 140 nuitées)", "pu": 8.45, "qty": 140, "unit": "nuitée", "tva": 0, "ht": 1183.00, "ttc": 1183.00 }
+        ]
+    },
+    "lot2_billy_billy": {
+        "id": "lot2_billy_billy",
+        "lot": 2,
+        "lotLabel": "Lot 2 : Déjeuner",
+        "name": "Billy Billy",
+        "paxCount": 100,
+        "paxLabel": "Base 100 participants",
+        "prestationHT": 11890.91,
+        "prestationTTC": 14269.09,
+        "prestationTVA": 2378.18,
+        "honorairesHT": 594.55,
+        "honorairesTTC": 713.45,
+        "honorairesTVA": 118.90,
+        "totalHT": 12485.46,
+        "totalTTC": 14982.55,
+        "totalTVA": 2497.09,
+        "details": [
+            { "desc": "Déjeuner Menu (Entrée, plat, dessert & softs, eaux, mocktails, cafés)", "pu": 10690.91, "qty": 1, "unit": "forfait", "tva": 20, "ht": 10690.91, "ttc": 12829.09 },
+            { "desc": "Déjeuner Vins (Boisson alcoolisée : 1 bouteille de vin pour 6 personnes)", "pu": 1200.00, "qty": 1, "unit": "forfait", "tva": 20, "ht": 1200.00, "ttc": 1440.00 }
+        ]
+    },
+    "lot2_it_trattoria": {
+        "id": "lot2_it_trattoria",
+        "lot": 2,
+        "lotLabel": "Lot 2 : Déjeuner",
+        "name": "IT Italian Trattoria",
+        "paxCount": 100,
+        "paxLabel": "Base 100 participants",
+        "prestationHT": 10669.45,
+        "prestationTTC": 12803.34,
+        "prestationTVA": 2133.89,
+        "honorairesHT": 533.47,
+        "honorairesTTC": 640.17,
+        "honorairesTVA": 106.70,
+        "totalHT": 11202.92,
+        "totalTTC": 13443.51,
+        "totalTVA": 2240.58,
+        "details": [
+            { "desc": "Déjeuner Menu", "pu": 5369.45, "qty": 1, "unit": "forfait", "tva": 20, "ht": 5369.45, "ttc": 6443.34 },
+            { "desc": "Déjeuner Vins & Service", "pu": 5300.00, "qty": 1, "unit": "forfait", "tva": 20, "ht": 5300.00, "ttc": 6360.00 }
+        ]
+    },
+    "lot3_duplex": {
+        "id": "lot3_duplex",
+        "lot": 3,
+        "lotLabel": "Lot 3 : Soirée",
+        "name": "Le Duplex",
+        "paxCount": 240,
+        "paxLabel": "Base 240 participants",
+        "prestationHT": 24945.00,
+        "prestationTTC": 29934.00,
+        "prestationTVA": 4989.00,
+        "honorairesHT": 1247.25,
+        "honorairesTTC": 1496.70,
+        "honorairesTVA": 249.45,
+        "totalHT": 26192.25,
+        "totalTTC": 31430.70,
+        "totalTVA": 5238.45,
+        "details": [
+            { "desc": "Package Soirée Duplex (19h00 - 01h00 : Apéritif open bar softs/tortillas, Dîner assis menu 3 plats, Soirée dansante avec DJ et open bar softs)", "pu": 85.00, "qty": 240, "unit": "pax", "tva": 20, "ht": 20400.00, "ttc": 24480.00 },
+            { "desc": "Soirée dansante — Open Bar Champagne & Alcools (22h00 - 01h00)", "pu": 13.00, "qty": 240, "unit": "forfait", "tva": 20, "ht": 3120.00, "ttc": 3744.00 },
+            { "desc": "Accès discothèque offert après 01h00", "pu": 0.00, "qty": 240, "unit": "pax", "tva": 20, "ht": 0.00, "ttc": 0.00 },
+            { "desc": "Weevers (Présence de 3 Weevers sur la soirée)", "pu": 450.00, "qty": 3, "unit": "pax", "tva": 20, "ht": 1350.00, "ttc": 1620.00 },
+            { "desc": "VHR Restauration Staff (1 repas par Weever)", "pu": 25.00, "qty": 3, "unit": "pièce", "tva": 20, "ht": 75.00, "ttc": 90.00 }
+        ],
+        "options": [
+            { "id": "bowling_billard", "desc": "Privatisation Bowling & Billard (19h00 - 21h00, 15 pistes, 3 billards, baby-foot)", "pu": 19.00, "qty": 240, "unit": "forfait", "tva": 20, "ht": 4560.00, "ttc": 5472.00 },
+            { "id": "magicien", "desc": "Animation Magicien Close-up déambulatoire (2h00)", "pu": 1100.00, "qty": 1, "unit": "forfait", "tva": 20, "ht": 1100.00, "ttc": 1320.00 },
+            { "id": "photobooth", "desc": "Borne Photo (Photobooth personnalisé)", "pu": 900.00, "qty": 1, "unit": "forfait", "tva": 20, "ht": 900.00, "ttc": 1080.00 },
+            { "id": "signaletique", "desc": "Signalétique personnalisée (Roll-up et Affichages)", "pu": 180.00, "qty": 1, "unit": "forfait", "tva": 20, "ht": 180.00, "ttc": 216.00 }
+        ]
+    },
+    "lot3_yachts": {
+        "id": "lot3_yachts",
+        "lot": 3,
+        "lotLabel": "Lot 3 : Soirée",
+        "name": "Yachts de Paris (Paquebot)",
+        "paxCount": 240,
+        "paxLabel": "Base 240 participants",
+        "prestationHT": 51175.00,
+        "prestationTTC": 61410.00,
+        "prestationTVA": 10235.00,
+        "honorairesHT": 2558.75,
+        "honorairesTTC": 3070.50,
+        "honorairesTVA": 511.75,
+        "totalHT": 53733.75,
+        "totalTTC": 64480.50,
+        "totalTVA": 10746.75,
+        "details": [
+            { "desc": "Yacht de Paris - Package Dîner croisière (Privatisation Yacht Paquebot 20h00-01h00, service/DJ, Croisière 2h30, Cocktail 3pcs, Champagne 1/5 btl, Dîner Gourmet 3 plats, Vins 1/3 btl, Soirée dansante 2h, 2 alcools/softs)", "pu": 200.00, "qty": 240, "unit": "pax", "tva": 20, "ht": 48000.00, "ttc": 57600.00 },
+            { "desc": "Agent de sécurité obligatoire", "pu": 450.00, "qty": 1, "unit": "personne", "tva": 20, "ht": 450.00, "ttc": 540.00 },
+            { "desc": "Délocalisation quai d'embarquement", "pu": 1300.00, "qty": 1, "unit": "forfait", "tva": 20, "ht": 1300.00, "ttc": 1560.00 },
+            { "desc": "Weevers (Présence de 3 Weevers sur la soirée)", "pu": 450.00, "qty": 3, "unit": "pax", "tva": 20, "ht": 1350.00, "ttc": 1620.00 },
+            { "desc": "VHR Restauration Staff (1 repas par Weever)", "pu": 25.00, "qty": 3, "unit": "pièce", "tva": 20, "ht": 75.00, "ttc": 90.00 }
+        ],
+        "options": [
+            { "id": "magicien", "desc": "Animation Magicien Close-up déambulatoire (2h00)", "pu": 1100.00, "qty": 1, "unit": "forfait", "tva": 20, "ht": 1100.00, "ttc": 1320.00 },
+            { "id": "photobooth", "desc": "Borne Photo (Photobooth personnalisable)", "pu": 900.00, "qty": 1, "unit": "forfait", "tva": 20, "ht": 900.00, "ttc": 1080.00 },
+            { "id": "signaletique", "desc": "Signalétique personnalisée (Roll-up et Affichages)", "pu": 180.00, "qty": 1, "unit": "forfait", "tva": 20, "ht": 180.00, "ttc": 216.00 }
+        ]
     }
 };
 
-const categoryLabels = {
-    "lieux": "Lieu & Salle",
-    "reunions": "Activité Création",
-    "extras": "Options Cadeaux",
-    "accompagnement": "Accompagnement"
-};
-
-const categoryColors = {
-    "lieux": "bg-blue-500",
-    "reunions": "bg-purple-500",
-    "extras": "bg-orange-500",
-    "accompagnement": "bg-teal-500"
-};
-
-// --- UTILS ---
 const formatEur = (value) => {
     return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(value);
 };
 
-// --- COMPONENTS ---
-
-const IconBuilding = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect><path d="M9 22v-4h6v4"></path><path d="M8 6h.01"></path><path d="M16 6h.01"></path><path d="M12 6h.01"></path><path d="M12 10h.01"></path><path d="M12 14h.01"></path><path d="M16 10h.01"></path><path d="M16 14h.01"></path><path d="M8 10h.01"></path><path d="M8 14h.01"></path></svg>;
-const IconChart = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><path d="M3 9h18"></path><path d="M9 21V9"></path></svg>;
-
-const ComparisonView = () => {
-    const venues = Object.values(budgetData);
-    const maxTotalHT = Math.max(...venues.map(v => v.totalHT));
-
-    return (
-        <div className="space-y-8 animate-fade-in">
-            <div className="grid grid-cols-1 gap-6">
-                {venues.map((venue) => {
-                    return (
-                        <div key={venue.id} className="relative bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                            <h3 className="text-lg font-semibold text-gray-900 mb-4">{venue.name}</h3>
-                            <div className="mb-2">
-                                <p className="text-sm text-gray-500 uppercase tracking-wide">Budget Total HT</p>
-                                <p className="text-3xl font-bold text-gray-900">{formatEur(venue.totalHT)}</p>
-                            </div>
-                            <div className="flex justify-between text-sm text-gray-500 mt-4 pt-4 border-t border-gray-100">
-                                <span>Total TTC: {formatEur(venue.totalTTC)}</span>
-                                <span className="font-semibold text-sky-600">{formatEur(venue.totalHT / venue.paxCount)} HT / pers.</span>
-                            </div>
-                        </div>
-                    );
-                })}
-            </div>
-
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-6">Répartition par catégorie (HT)</h3>
-                <div className="space-y-6">
-                    {venues.map(venue => (
-                        <div key={venue.id}>
-                            <div className="flex justify-between text-sm font-medium mb-2">
-                                <span>{venue.name}</span>
-                                <span>{formatEur(venue.totalHT - venue.honorairesHT)} HT <span className="text-gray-400 font-normal">(hors honoraires)</span></span>
-                            </div>
-                            <div className="h-6 w-full bg-gray-100 rounded-full overflow-hidden flex">
-                                {Object.entries(venue.categories).map(([catKey, catValue]) => {
-                                    const percentage = (catValue / maxTotalHT) * 100;
-                                    return (
-                                        <div
-                                            key={catKey}
-                                            className={`h-full ${categoryColors[catKey]} group relative cursor-pointer border-r border-white/20 last:border-0`}
-                                            style={{ width: `${percentage}%` }}
-                                        >
-                                            <div className="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs rounded py-1 px-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10 whitespace-nowrap">
-                                                {categoryLabels[catKey]}: {formatEur(catValue)} HT
-                                                <svg className="absolute text-gray-900 h-2 w-full left-0 top-full" x="0px" y="0px" viewBox="0 0 255 255"><polygon className="fill-current" points="0,0 127.5,127.5 255,0" /></svg>
-                                            </div>
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        </div>
-                    ))}
-                </div>
-                <div className="mt-6 flex flex-wrap gap-4 pt-4 border-t border-gray-100">
-                    {Object.entries(categoryLabels).map(([key, label]) => (
-                        <div key={key} className="flex items-center text-xs text-gray-600">
-                            <span className={`w-3 h-3 rounded-full mr-2 ${categoryColors[key]}`}></span>
-                            {label}
-                        </div>
-                    ))}
-                </div>
-            </div>
-
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-gray-200 text-sm">
-                        <thead className="bg-gray-50">
-                            <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Poste de Dépense</th>
-                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Montant HT</th>
-                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">TVA (20%)</th>
-                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Montant TTC</th>
-                            </tr>
-                        </thead>
-                        <tbody className="bg-white divide-y divide-gray-200">
-                            {Object.keys(categoryLabels).map(catKey => {
-                                const val = venues[0].categories[catKey] || 0;
-                                if (val === 0 && (!venues[0].details[catKey] || venues[0].details[catKey].length === 0)) return null;
-                                return (
-                                    <tr key={catKey} className="hover:bg-gray-50 transition-colors">
-                                        <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900 flex items-center">
-                                            <span className={`w-2 h-2 rounded-full mr-2 ${categoryColors[catKey]}`}></span>
-                                            {categoryLabels[catKey]}
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-right text-gray-600">{formatEur(val)}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-right text-gray-600">{formatEur(val * 0.2)}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-right text-gray-600">{formatEur(val * 1.2)}</td>
-                                    </tr>
-                                )
-                            })}
-
-                            <tr className="bg-gray-50 border-t-2 border-gray-200">
-                                <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">Honoraires Agence (5%)</td>
-                                <td className="px-6 py-4 whitespace-nowrap text-right text-gray-600">{formatEur(venues[0].honorairesHT)}</td>
-                                <td className="px-6 py-4 whitespace-nowrap text-right text-gray-600">{formatEur(venues[0].honorairesHT * 0.2)}</td>
-                                <td className="px-6 py-4 whitespace-nowrap text-right text-gray-600">{formatEur(venues[0].honorairesHT * 1.2)}</td>
-                            </tr>
-
-                            <tr className="bg-sky-50 border-t border-sky-200">
-                                <td className="px-6 py-4 whitespace-nowrap font-bold text-sky-900 uppercase tracking-wider">Total Final</td>
-                                <td className="px-6 py-4 whitespace-nowrap text-right font-bold text-lg text-sky-900">{formatEur(venues[0].totalHT)}</td>
-                                <td className="px-6 py-4 whitespace-nowrap text-right font-bold text-lg text-sky-900">{formatEur(venues[0].totalTTC - venues[0].totalHT)}</td>
-                                <td className="px-6 py-4 whitespace-nowrap text-right font-bold text-lg text-sky-900">{formatEur(venues[0].totalTTC)}</td>
-                            </tr>
-                            
-                            <tr className="bg-sky-50/50">
-                                <td className="px-6 py-3 whitespace-nowrap text-sm font-semibold text-sky-700">Prix par personne HT (50 pers.)</td>
-                                <td colSpan="3" className="px-6 py-3 whitespace-nowrap text-right text-sm font-semibold text-sky-700">
-                                    {formatEur(venues[0].totalHT / venues[0].paxCount)}
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    );
-};
-
-const VenueDetailView = ({ venueId }) => {
-    const venue = budgetData[venueId];
-    const subtotalHT = venue.totalHT - venue.honorairesHT;
-
-    return (
-        <div className="space-y-6 animate-fade-in">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <div>
-                    <h2 className="text-2xl font-bold text-gray-900">{venue.name}</h2>
-                    <p className="text-gray-500">Détail du devis estimatif</p>
-                </div>
-                <div className="text-right bg-sky-50 p-4 rounded-lg border border-sky-100">
-                    <p className="text-sm font-medium text-sky-600 uppercase tracking-wider mb-1">Total HT</p>
-                    <p className="text-3xl font-bold text-sky-900">{formatEur(venue.totalHT)}</p>
-                    <p className="text-xs text-sky-500 mt-1">Total TTC: {formatEur(venue.totalTTC)}</p>
-                </div>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div className="lg:col-span-2 space-y-4">
-                    {Object.entries(venue.categories).filter(([catKey, catValue]) => catValue > 0 || (venue.details && venue.details[catKey] && venue.details[catKey].length > 0)).map(([catKey, catValue]) => {
-                        const percentage = ((catValue / subtotalHT) * 100).toFixed(1);
-                        return (
-                            <div key={catKey} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 flex flex-col gap-4">
-                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                                    <div className="flex items-center gap-3">
-                                        <div className={`min-w-[3.5rem] px-2 h-10 rounded-lg flex items-center justify-center text-white ${categoryColors[catKey]}`}>
-                                            <span className="font-bold text-sm">{percentage}%</span>
-                                        </div>
-                                        <div>
-                                            <h4 className="font-semibold text-gray-900">{categoryLabels[catKey]}</h4>
-                                            <div className="w-48 bg-gray-200 rounded-full h-1.5 mt-2">
-                                                <div className={`${categoryColors[catKey]} h-1.5 rounded-full`} style={{ width: `${percentage}%` }}></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="text-right">
-                                        <p className="text-lg font-bold text-gray-900">{formatEur(catValue)}</p>
-                                        <p className="text-xs text-gray-500">HT</p>
-                                    </div>
-                                </div>
-
-                                {venue.details && venue.details[catKey] && (
-                                    <div className="mt-2 pt-4 border-t border-gray-100 space-y-3">
-                                        {venue.details[catKey].map((item, idx) => (
-                                            <div key={idx} className="flex flex-col text-sm border-b border-gray-50 pb-2 last:border-0 last:pb-0">
-                                                <div className="flex justify-between items-start gap-4">
-                                                    <span className={`font-medium flex items-center gap-2 ${item.isOption ? "text-amber-600" : "text-gray-800"}`}>
-                                                        {item.desc}
-                                                        {item.isOption && <span className="text-[10px] bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full uppercase font-bold tracking-wider relative top-px">Option</span>}
-                                                    </span>
-                                                    <div className="text-right">
-                                                        <span className="text-gray-900 font-bold whitespace-nowrap block">{formatEur(item.price)} HT</span>
-                                                        <span className="text-gray-400 text-[10px] block">TVA (20%): {formatEur(item.tva)}</span>
-                                                    </div>
-                                                </div>
-                                                {item.subDesc && (
-                                                    <div className="text-gray-500 text-xs mt-1 italic leading-relaxed whitespace-pre-line pr-16" dangerouslySetInnerHTML={{ __html: item.subDesc }}>
-                                                    </div>
-                                                )}
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
-                        );
-                    })}
-
-                    <div className="bg-gray-50 rounded-lg border border-gray-200 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                        <div>
-                            <h4 className="font-semibold text-gray-900">Honoraires Agence (5%)</h4>
-                            <p className="text-sm text-gray-500">Calculés sur le sous-total HT</p>
-                        </div>
-                        <div className="text-right">
-                            <p className="text-lg font-bold text-gray-900">{formatEur(venue.honorairesHT)}</p>
-                            <p className="text-xs text-gray-500">HT</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="lg:col-span-1">
-                    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 sticky top-24">
-                        <h3 className="text-lg font-semibold text-gray-900 mb-4 border-b pb-2">Récapitulatif Financier</h3>
-                        <div className="space-y-3 text-sm">
-                            <div className="flex justify-between text-gray-600">
-                                <span>Sous-total HT</span>
-                                <span>{formatEur(subtotalHT)}</span>
-                            </div>
-                            <div className="flex justify-between text-gray-600">
-                                <span>Honoraires HT (5%)</span>
-                                <span>{formatEur(venue.honorairesHT)}</span>
-                            </div>
-                            <div className="border-t pt-3 flex justify-between text-gray-500 text-sm">
-                                <span>TVA Totale (20%)</span>
-                                <span>{formatEur(venue.totalTTC - venue.totalHT)}</span>
-                            </div>
-                            <div className="flex justify-between text-gray-500 text-sm">
-                                <span>Total TTC</span>
-                                <span>{formatEur(venue.totalTTC)}</span>
-                            </div>
-                            <div className="border-t pt-3 mt-2 flex justify-between font-bold text-sky-600 text-lg">
-                                <span>Total HT</span>
-                                <span>{formatEur(venue.totalHT)}</span>
-                            </div>
-                            <div className="border-t pt-3 mt-2 flex justify-between font-bold text-emerald-600 text-base">
-                                <span>Prix / personne HT</span>
-                                <span>{formatEur(venue.totalHT / venue.paxCount)}</span>
-                            </div>
-                            <p className="text-xs text-gray-400 text-right">Base {venue.paxCount} personnes</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
-};
+// --- ICONS ---
+const IconConfig = () => <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" /></svg>;
+const IconInfo = () => <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-slate-400 mr-1 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>;
 
 export default function App() {
-    const [activeTab, setActiveTab] = useState('compare');
+    const [activeTab, setActiveTab] = useState('config'); // 'config', 'lot1', 'lot2', 'lot3'
+
+    // Configurative Selections
+    const [selHotel, setSelHotel] = useState('lot1_pullman');
+    const [selLunch, setSelLunch] = useState('lot2_billy_billy');
+    const [selEvening, setSelEvening] = useState('lot3_duplex');
+    const [selectedOptions, setSelectedOptions] = useState({
+        bowling_billard: false,
+        magicien: false,
+        photobooth: false,
+        signaletique: false
+    });
+
+    // Reset selected options when evening changes to ensure only valid options are counted
+    useEffect(() => {
+        setSelectedOptions({
+            bowling_billard: false,
+            magicien: false,
+            photobooth: false,
+            signaletique: false
+        });
+    }, [selEvening]);
+
+    const hotelData = budgetData[selHotel];
+    const lunchData = budgetData[selLunch];
+    const eveningData = budgetData[selEvening];
+
+    // Option Calculations
+    const activeOptionsList = eveningData.options || [];
+    const calculatedOptions = activeOptionsList.map(opt => {
+        const isSelected = selectedOptions[opt.id] || false;
+        return {
+            ...opt,
+            isSelected,
+            htCost: isSelected ? opt.ht : 0,
+            ttcCost: isSelected ? opt.ttc : 0,
+            tvaCost: isSelected ? (opt.ttc - opt.ht) : 0
+        };
+    });
+
+    const totalOptionsHT = calculatedOptions.reduce((sum, o) => sum + o.htCost, 0);
+    const totalOptionsTTC = calculatedOptions.reduce((sum, o) => sum + o.ttcCost, 0);
+    const totalOptionsTVA = calculatedOptions.reduce((sum, o) => sum + o.tvaCost, 0);
+
+    // Grand Calculations
+    const prestationTotalHT = hotelData.prestationHT + lunchData.prestationHT + eveningData.prestationHT + totalOptionsHT;
+    const prestationTotalTVA = hotelData.prestationTVA + lunchData.prestationTVA + eveningData.prestationTVA + totalOptionsTVA;
+    const prestationTotalTTC = hotelData.prestationTTC + lunchData.prestationTTC + eveningData.prestationTTC + totalOptionsTTC;
+
+    const honorairesTotalHT = hotelData.honorairesHT + lunchData.honorairesHT + eveningData.honorairesHT;
+    const honorairesTotalTVA = hotelData.honorairesTVA + lunchData.honorairesTVA + eveningData.honorairesTVA;
+    const honorairesTotalTTC = hotelData.honorairesTTC + lunchData.honorairesTTC + eveningData.honorairesTTC;
+
+    const grandTotalHT = prestationTotalHT + honorairesTotalHT;
+    const grandTotalTTC = prestationTotalTTC + honorairesTotalTTC;
 
     return (
-        <div className="min-h-screen bg-slate-50 pb-12 font-sans">
-            <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="min-h-screen bg-[#F8FAFC]">
+            {/* Header */}
+            <header className="bg-[#0C2340] text-white border-b-4 border-[#00A3A6] shadow-md sticky top-0 z-40">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
+                    <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
                         <div>
-                            <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-                                KPMG — Séminaire Financier
+                            <div className="flex items-center gap-3">
+                                <span className="bg-[#00338D] font-bold px-3 py-1 text-sm tracking-wider uppercase rounded border border-white/20">AO Séminaire</span>
+                                <span className="text-slate-400 text-xs font-mono">ID: KPMG-2026-REG</span>
+                            </div>
+                            <h1 className="text-2xl lg:text-3xl font-extrabold tracking-tight mt-2 font-heading">
+                                KPMG <span className="font-light text-slate-300">— Séminaire Associés Régionaux</span>
                             </h1>
-                            <p className="text-sm text-gray-500">Proposition événementielle — Cinquième Sens & Cœur Défense</p>
+                            <p className="text-sm text-slate-300 mt-1 max-w-2xl">
+                                Outil d'aide à la décision : configurez les lots et observez les budgets d'honoraires et de prestations.
+                            </p>
                         </div>
-                        <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg overflow-x-auto">
+
+                        <div className="flex flex-wrap gap-2 bg-slate-900/40 p-1.5 rounded-xl border border-white/5">
                             <button
-                                onClick={() => setActiveTab('compare')}
-                                className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md whitespace-nowrap transition-colors ${activeTab === 'compare' ? 'bg-white text-sky-600 shadow-sm' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-200'}`}
+                                onClick={() => setActiveTab('config')}
+                                className={`flex items-center gap-2 px-4 py-2.5 text-xs lg:text-sm font-semibold rounded-lg transition-all ${activeTab === 'config' ? 'bg-[#00338D] text-white shadow-md' : 'text-slate-300 hover:text-white hover:bg-white/5'}`}
                             >
-                                <IconChart /> Vue d'ensemble
+                                <IconConfig /> Configurateur Interactif
                             </button>
-                            {Object.values(budgetData).map(venue => (
-                                <button
-                                    key={venue.id}
-                                    onClick={() => setActiveTab(venue.id)}
-                                    className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md whitespace-nowrap transition-colors ${activeTab === venue.id ? 'bg-white text-sky-600 shadow-sm' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-200'}`}
-                                >
-                                    <IconBuilding /> {venue.name}
-                                </button>
-                            ))}
+                            <button
+                                onClick={() => setActiveTab('lot1')}
+                                className={`flex items-center gap-2 px-4 py-2.5 text-xs lg:text-sm font-semibold rounded-lg transition-all ${activeTab === 'lot1' ? 'bg-[#00338D] text-white shadow-md' : 'text-slate-300 hover:text-white hover:bg-white/5'}`}
+                            >
+                                Hébergement (Lot 1)
+                            </button>
+                            <button
+                                onClick={() => setActiveTab('lot2')}
+                                className={`flex items-center gap-2 px-4 py-2.5 text-xs lg:text-sm font-semibold rounded-lg transition-all ${activeTab === 'lot2' ? 'bg-[#00338D] text-white shadow-md' : 'text-slate-300 hover:text-white hover:bg-white/5'}`}
+                            >
+                                Déjeuner (Lot 2)
+                            </button>
+                            <button
+                                onClick={() => setActiveTab('lot3')}
+                                className={`flex items-center gap-2 px-4 py-2.5 text-xs lg:text-sm font-semibold rounded-lg transition-all ${activeTab === 'lot3' ? 'bg-[#00338D] text-white shadow-md' : 'text-slate-300 hover:text-white hover:bg-white/5'}`}
+                            >
+                                Soirée (Lot 3)
+                            </button>
                         </div>
                     </div>
                 </div>
             </header>
-            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
-                {activeTab === 'compare' ? <ComparisonView /> : <VenueDetailView venueId={activeTab} />}
+
+            {/* Main Container */}
+            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                {activeTab === 'config' && (
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                        
+                        {/* Configuration Panel */}
+                        <div className="lg:col-span-8 space-y-6">
+                            <h2 className="text-xl font-bold text-[#0C2340] flex items-center gap-2">
+                                <span className="bg-[#00338D] w-2.5 h-6 rounded-full block"></span>
+                                Choix des prestataires par lot
+                            </h2>
+
+                            {/* LOT 1 Card */}
+                            <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden hover:border-slate-300 transition-all">
+                                <div className="bg-[#F2F4F7] px-6 py-4 border-b border-slate-100 flex justify-between items-center">
+                                    <div>
+                                        <span className="text-[10px] bg-[#00338D] text-white font-bold px-2 py-0.5 rounded tracking-wide uppercase">Lot 1</span>
+                                        <h3 className="text-md font-bold text-[#0C2340] mt-1">Hébergement</h3>
+                                    </div>
+                                    <span className="text-xs text-slate-500 font-mono">Base 100 participants</span>
+                                </div>
+                                <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    {/* Pullman Option */}
+                                    <label className={`relative flex flex-col p-4 rounded-xl border-2 cursor-pointer transition-all ${selHotel === 'lot1_pullman' ? 'border-[#00338D] bg-blue-50/20' : 'border-slate-200 hover:border-slate-300 bg-white'}`}>
+                                        <div className="flex items-center justify-between">
+                                            <span className="font-bold text-slate-900">Pullman La Défense</span>
+                                            <input 
+                                                type="radio" 
+                                                name="hotel" 
+                                                value="lot1_pullman" 
+                                                checked={selHotel === 'lot1_pullman'}
+                                                onChange={() => setSelHotel('lot1_pullman')}
+                                                className="h-4 w-4 text-[#00338D] border-slate-300 focus:ring-[#00338D]"
+                                            />
+                                        </div>
+                                        <div className="mt-4 border-t border-slate-100 pt-3 flex justify-between items-baseline">
+                                            <span className="text-xs text-slate-500">Cumul HT</span>
+                                            <span className="text-lg font-extrabold text-[#0C2340] font-mono">{formatEur(budgetData.lot1_pullman.totalHT)}</span>
+                                        </div>
+                                        <div className="text-[11px] text-[#00338D]/80 text-right mt-0.5 font-semibold">
+                                            Soit {formatEur(budgetData.lot1_pullman.totalHT / 100)} HT / pax
+                                        </div>
+                                    </label>
+
+                                    {/* Meridien Option */}
+                                    <label className={`relative flex flex-col p-4 rounded-xl border-2 cursor-pointer transition-all ${selHotel === 'lot1_meridien' ? 'border-[#00338D] bg-blue-50/20' : 'border-slate-200 hover:border-slate-300 bg-white'}`}>
+                                        <div className="flex items-center justify-between">
+                                            <span className="font-bold text-slate-900">Méridien Arc de Triomphe</span>
+                                            <input 
+                                                type="radio" 
+                                                name="hotel" 
+                                                value="lot1_meridien" 
+                                                checked={selHotel === 'lot1_meridien'}
+                                                onChange={() => setSelHotel('lot1_meridien')}
+                                                className="h-4 w-4 text-[#00338D] border-slate-300 focus:ring-[#00338D]"
+                                            />
+                                        </div>
+                                        <div className="mt-4 border-t border-slate-100 pt-3 flex justify-between items-baseline">
+                                            <span className="text-xs text-slate-500">Cumul HT</span>
+                                            <span className="text-lg font-extrabold text-[#0C2340] font-mono">{formatEur(budgetData.lot1_meridien.totalHT)}</span>
+                                        </div>
+                                        <div className="text-[11px] text-[#00338D]/80 text-right mt-0.5 font-semibold">
+                                            Soit {formatEur(budgetData.lot1_meridien.totalHT / 100)} HT / pax
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+
+                            {/* LOT 2 Card */}
+                            <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden hover:border-slate-300 transition-all">
+                                <div className="bg-[#F2F4F7] px-6 py-4 border-b border-slate-100 flex justify-between items-center">
+                                    <div>
+                                        <span className="text-[10px] bg-[#00338D] text-white font-bold px-2 py-0.5 rounded tracking-wide uppercase">Lot 2</span>
+                                        <h3 className="text-md font-bold text-[#0C2340] mt-1">Déjeuner</h3>
+                                    </div>
+                                    <span className="text-xs text-slate-500 font-mono">Base 100 participants</span>
+                                </div>
+                                <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    {/* Billy Billy */}
+                                    <label className={`relative flex flex-col p-4 rounded-xl border-2 cursor-pointer transition-all ${selLunch === 'lot2_billy_billy' ? 'border-[#00338D] bg-blue-50/20' : 'border-slate-200 hover:border-slate-300 bg-white'}`}>
+                                        <div className="flex items-center justify-between">
+                                            <span className="font-bold text-slate-900">Billy Billy</span>
+                                            <input 
+                                                type="radio" 
+                                                name="lunch" 
+                                                value="lot2_billy_billy" 
+                                                checked={selLunch === 'lot2_billy_billy'}
+                                                onChange={() => setSelLunch('lot2_billy_billy')}
+                                                className="h-4 w-4 text-[#00338D] border-slate-300 focus:ring-[#00338D]"
+                                            />
+                                        </div>
+                                        <div className="mt-4 border-t border-slate-100 pt-3 flex justify-between items-baseline">
+                                            <span className="text-xs text-slate-500">Cumul HT</span>
+                                            <span className="text-lg font-extrabold text-[#0C2340] font-mono">{formatEur(budgetData.lot2_billy_billy.totalHT)}</span>
+                                        </div>
+                                        <div className="text-[11px] text-[#00338D]/80 text-right mt-0.5 font-semibold">
+                                            Soit {formatEur(budgetData.lot2_billy_billy.totalHT / 100)} HT / pax
+                                        </div>
+                                    </label>
+
+                                    {/* IT Trattoria */}
+                                    <label className={`relative flex flex-col p-4 rounded-xl border-2 cursor-pointer transition-all ${selLunch === 'lot2_it_trattoria' ? 'border-[#00338D] bg-blue-50/20' : 'border-slate-200 hover:border-slate-300 bg-white'}`}>
+                                        <div className="flex items-center justify-between">
+                                            <span className="font-bold text-slate-900">IT Italian Trattoria</span>
+                                            <input 
+                                                type="radio" 
+                                                name="lunch" 
+                                                value="lot2_it_trattoria" 
+                                                checked={selLunch === 'lot2_it_trattoria'}
+                                                onChange={() => setSelLunch('lot2_it_trattoria')}
+                                                className="h-4 w-4 text-[#00338D] border-slate-300 focus:ring-[#00338D]"
+                                            />
+                                        </div>
+                                        <div className="mt-4 border-t border-slate-100 pt-3 flex justify-between items-baseline">
+                                            <span className="text-xs text-slate-500">Cumul HT</span>
+                                            <span className="text-lg font-extrabold text-[#0C2340] font-mono">{formatEur(budgetData.lot2_it_trattoria.totalHT)}</span>
+                                        </div>
+                                        <div className="text-[11px] text-[#00338D]/80 text-right mt-0.5 font-semibold">
+                                            Soit {formatEur(budgetData.lot2_it_trattoria.totalHT / 100)} HT / pax
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+
+                            {/* LOT 3 Card */}
+                            <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden hover:border-slate-300 transition-all">
+                                <div className="bg-[#F2F4F7] px-6 py-4 border-b border-slate-100 flex justify-between items-center">
+                                    <div>
+                                        <span className="text-[10px] bg-[#00338D] text-white font-bold px-2 py-0.5 rounded tracking-wide uppercase">Lot 3</span>
+                                        <h3 className="text-md font-bold text-[#0C2340] mt-1">Soirée</h3>
+                                    </div>
+                                    <span className="text-xs text-slate-500 font-mono">Base 240 participants</span>
+                                </div>
+                                <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    {/* Duplex */}
+                                    <label className={`relative flex flex-col p-4 rounded-xl border-2 cursor-pointer transition-all ${selEvening === 'lot3_duplex' ? 'border-[#00338D] bg-blue-50/20' : 'border-slate-200 hover:border-slate-300 bg-white'}`}>
+                                        <div className="flex items-center justify-between">
+                                            <span className="font-bold text-slate-900">Le Duplex</span>
+                                            <input 
+                                                type="radio" 
+                                                name="evening" 
+                                                value="lot3_duplex" 
+                                                checked={selEvening === 'lot3_duplex'}
+                                                onChange={() => setSelEvening('lot3_duplex')}
+                                                className="h-4 w-4 text-[#00338D] border-slate-300 focus:ring-[#00338D]"
+                                            />
+                                        </div>
+                                        <div className="mt-4 border-t border-slate-100 pt-3 flex justify-between items-baseline">
+                                            <span className="text-xs text-slate-500">Cumul HT (hors opt.)</span>
+                                            <span className="text-lg font-extrabold text-[#0C2340] font-mono">{formatEur(budgetData.lot3_duplex.totalHT)}</span>
+                                        </div>
+                                        <div className="text-[11px] text-[#00338D]/80 text-right mt-0.5 font-semibold">
+                                            Soit {formatEur(budgetData.lot3_duplex.totalHT / 240)} HT / pax
+                                        </div>
+                                    </label>
+
+                                    {/* Paquebot */}
+                                    <label className={`relative flex flex-col p-4 rounded-xl border-2 cursor-pointer transition-all ${selEvening === 'lot3_yachts' ? 'border-[#00338D] bg-blue-50/20' : 'border-slate-200 hover:border-slate-300 bg-white'}`}>
+                                        <div className="flex items-center justify-between">
+                                            <span className="font-bold text-slate-900">Yachts de Paris (Paquebot)</span>
+                                            <input 
+                                                type="radio" 
+                                                name="evening" 
+                                                value="lot3_yachts" 
+                                                checked={selEvening === 'lot3_yachts'}
+                                                onChange={() => setSelEvening('lot3_yachts')}
+                                                className="h-4 w-4 text-[#00338D] border-slate-300 focus:ring-[#00338D]"
+                                            />
+                                        </div>
+                                        <div className="mt-4 border-t border-slate-100 pt-3 flex justify-between items-baseline">
+                                            <span className="text-xs text-slate-500">Cumul HT (hors opt.)</span>
+                                            <span className="text-lg font-extrabold text-[#0C2340] font-mono">{formatEur(budgetData.lot3_yachts.totalHT)}</span>
+                                        </div>
+                                        <div className="text-[11px] text-[#00338D]/80 text-right mt-0.5 font-semibold">
+                                            Soit {formatEur(budgetData.lot3_yachts.totalHT / 240)} HT / pax
+                                        </div>
+                                    </label>
+                                </div>
+
+                                {/* OPTIONS SECTION */}
+                                {activeOptionsList.length > 0 && (
+                                    <div className="px-6 pb-6 border-t border-slate-100 pt-4 bg-slate-50/50">
+                                        <h4 className="text-xs font-bold text-[#00338D] uppercase tracking-wider mb-3">
+                                            Options facultatives — Soirée ({eveningData.name})
+                                        </h4>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                            {calculatedOptions.map(opt => (
+                                                <label 
+                                                    key={opt.id} 
+                                                    className={`flex items-start p-3 rounded-lg border cursor-pointer transition-all select-none text-xs ${opt.isSelected ? 'bg-amber-50/40 border-amber-300' : 'bg-white border-slate-200 hover:border-slate-300'}`}
+                                                >
+                                                    <input 
+                                                        type="checkbox"
+                                                        checked={opt.isSelected}
+                                                        onChange={(e) => {
+                                                            setSelectedOptions(prev => ({
+                                                                ...prev,
+                                                                [opt.id]: e.target.checked
+                                                            }));
+                                                        }}
+                                                        className="h-4.5 w-4.5 rounded text-amber-500 border-slate-300 focus:ring-amber-500 mt-0.5 mr-3"
+                                                    />
+                                                    <div className="flex-1">
+                                                        <span className="font-semibold text-slate-900 block">{opt.desc}</span>
+                                                        <span className="text-slate-500 text-[10px] mt-1 block">
+                                                            Tarif : {formatEur(opt.ht)} HT ({formatEur(opt.ttc)} TTC)
+                                                            {opt.qty > 1 && ` — ${formatEur(opt.pu)} HT / pax`}
+                                                        </span>
+                                                    </div>
+                                                </label>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Financial Summary Dashboard (Right Column) */}
+                        <div className="lg:col-span-4">
+                            <div className="sticky top-28 space-y-6">
+                                <h2 className="text-xl font-bold text-[#0C2340] flex items-center gap-2">
+                                    <span className="bg-amber-500 w-2.5 h-6 rounded-full block"></span>
+                                    Récapitulatif Financier
+                                </h2>
+
+                                <div className="bg-white rounded-2xl shadow-md border border-slate-200 overflow-hidden">
+                                    {/* Main Title Banner */}
+                                    <div className="bg-gradient-to-r from-[#0C2340] to-[#00338D] text-white px-6 py-5">
+                                        <p className="text-[10px] uppercase font-bold tracking-widest text-slate-300">Budget Global Configuré</p>
+                                        <h3 className="text-3xl font-extrabold mt-1 font-heading font-mono">{formatEur(grandTotalHT)}</h3>
+                                        <p className="text-xs text-slate-300 mt-1">Total TTC : {formatEur(grandTotalTTC)}</p>
+                                    </div>
+
+                                    {/* Details Breakdown */}
+                                    <div className="p-6 space-y-4 text-xs border-b border-slate-100">
+                                        <div className="flex justify-between items-center text-slate-500 pb-2 border-b border-slate-100">
+                                            <span className="font-semibold">Postes budgétaires</span>
+                                            <span>HT / TTC</span>
+                                        </div>
+
+                                        {/* Prestation Row */}
+                                        <div className="flex justify-between items-center">
+                                            <div>
+                                                <span className="font-semibold text-slate-700 block">Prestations prestataires</span>
+                                                <span className="text-[10px] text-slate-400">Total cumulé des 3 lots</span>
+                                            </div>
+                                            <div className="text-right">
+                                                <span className="font-bold text-slate-900 block font-mono">{formatEur(prestationTotalHT)}</span>
+                                                <span className="text-[10px] text-slate-500 font-mono">{formatEur(prestationTotalTTC)} TTC</span>
+                                            </div>
+                                        </div>
+
+                                        {/* Agency Fees Row */}
+                                        <div className="flex justify-between items-center">
+                                            <div>
+                                                <span className="font-semibold text-slate-700 block">Honoraires agence (5%)</span>
+                                                <span className="text-[10px] text-slate-400">Calculés sur base HT</span>
+                                            </div>
+                                            <div className="text-right">
+                                                <span className="font-bold text-slate-900 block font-mono">{formatEur(honorairesTotalHT)}</span>
+                                                <span className="text-[10px] text-slate-500 font-mono">{formatEur(honorairesTotalTTC)} TTC</span>
+                                            </div>
+                                        </div>
+
+                                        {/* Options Row (If checked) */}
+                                        {totalOptionsHT > 0 && (
+                                            <div className="flex justify-between items-center bg-amber-50/50 p-2.5 rounded-lg border border-amber-200">
+                                                <div>
+                                                    <span className="font-bold text-amber-900 block">Options Soirée incluses</span>
+                                                    <span className="text-[10px] text-amber-700">Hors honoraires</span>
+                                                </div>
+                                                <div className="text-right">
+                                                    <span className="font-extrabold text-amber-950 block font-mono">+{formatEur(totalOptionsHT)}</span>
+                                                    <span className="text-[10px] text-amber-800 font-mono">{formatEur(totalOptionsTTC)} TTC</span>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* Summary Cards */}
+                                    <div className="p-6 bg-slate-50 space-y-3 border-b border-slate-100">
+                                        <h4 className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Répartition analytique par pax</h4>
+                                        
+                                        <div className="bg-white p-3 rounded-lg border border-slate-200/60 flex justify-between items-center">
+                                            <div>
+                                                <span className="font-medium text-slate-700 block text-[11px]">Lot 1 & 2 (Héb. + Déj.)</span>
+                                                <span className="text-[9px] text-slate-400">Base 100 participants</span>
+                                            </div>
+                                            <span className="font-bold text-[#00338D] text-[13px] font-mono">
+                                                {formatEur((hotelData.totalHT + lunchData.totalHT) / 100)} HT <span className="text-[9px] font-normal text-slate-500 font-sans">/pers.</span>
+                                            </span>
+                                        </div>
+
+                                        <div className="bg-white p-3 rounded-lg border border-slate-200/60 flex justify-between items-center">
+                                            <div>
+                                                <span className="font-medium text-slate-700 block text-[11px]">Lot 3 (Soirée {totalOptionsHT > 0 && '+ opt.'})</span>
+                                                <span className="text-[9px] text-slate-400">Base 240 participants</span>
+                                            </div>
+                                            <span className="font-bold text-[#00338D] text-[13px] font-mono">
+                                                {formatEur((eveningData.totalHT + totalOptionsHT) / 240)} HT <span className="text-[9px] font-normal text-slate-500 font-sans">/pers.</span>
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    {/* Config Details info */}
+                                    <div className="p-4 bg-slate-100/50 text-[10px] text-slate-500 flex items-start">
+                                        <IconInfo />
+                                        <p className="leading-relaxed">
+                                            Les montants indiqués ci-dessus correspondent à la configuration active de votre sélection. Vous pouvez imprimer cette page ou accéder aux tables d'offres complètes dans les onglets.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* LOT 1 DETAILED VIEW */}
+                {activeTab === 'lot1' && (
+                    <LotDetailedComparison lotId={1} options={['lot1_pullman', 'lot1_meridien']} />
+                )}
+
+                {/* LOT 2 DETAILED VIEW */}
+                {activeTab === 'lot2' && (
+                    <LotDetailedComparison lotId={2} options={['lot2_billy_billy', 'lot2_it_trattoria']} />
+                )}
+
+                {/* LOT 3 DETAILED VIEW */}
+                {activeTab === 'lot3' && (
+                    <LotDetailedComparison lotId={3} options={['lot3_duplex', 'lot3_yachts']} />
+                )}
             </main>
+            <footer className="bg-[#0C2340] text-slate-400 text-xs py-8 mt-12 border-t border-slate-800">
+                <div className="max-w-7xl mx-auto px-4 text-center">
+                    <p>© 2026 KPMG Séminaire Financier. Tous droits réservés.</p>
+                    <p className="mt-2 text-slate-600">Calculs certifiés conformes aux devis de l'appel d'offres.</p>
+                </div>
+            </footer>
+        </div>
+    );
+}
+
+// --- COMPONENT FOR LOT DETAILS COMPARISON ---
+function LotDetailedComparison({ lotId, options }) {
+    const dataLeft = budgetData[options[0]];
+    const dataRight = budgetData[options[1]];
+
+    return (
+        <div className="space-y-6">
+            <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                <h2 className="text-2xl font-bold text-[#0C2340] font-heading">
+                    {dataLeft.lotLabel} — RFP & Offres Détaillées
+                </h2>
+                <p className="text-sm text-slate-500 mt-1">
+                    Comparatif des offres détaillées des prestataires reçues pour le {dataLeft.lotLabel.toLowerCase()}.
+                </p>
+            </div>
+
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+                {/* Left Provider */}
+                <ProviderDetailsCard data={dataLeft} />
+                
+                {/* Right Provider */}
+                <ProviderDetailsCard data={dataRight} />
+            </div>
+        </div>
+    );
+}
+
+function ProviderDetailsCard({ data }) {
+    return (
+        <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col justify-between">
+            <div>
+                {/* Header */}
+                <div className="bg-slate-50 px-6 py-5 border-b border-slate-200/60 flex justify-between items-start gap-4">
+                    <div>
+                        <h3 className="text-lg font-bold text-[#0C2340] font-heading">{data.name}</h3>
+                        <p className="text-[11px] text-slate-500 mt-1">{data.paxLabel}</p>
+                    </div>
+                    <div className="text-right">
+                        <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Cumul HT</span>
+                        <span className="text-2xl font-extrabold text-[#00338D] block mt-0.5 font-mono">{formatEur(data.totalHT)}</span>
+                    </div>
+                </div>
+
+                {/* Lines table */}
+                <div className="p-6">
+                    <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Détail des prestations</h4>
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-xs text-left border-collapse">
+                            <thead>
+                                <tr className="border-b border-slate-100 text-slate-400">
+                                    <th className="py-2.5 font-semibold">Désignation</th>
+                                    <th className="py-2.5 text-right font-semibold">P.U. HT</th>
+                                    <th className="py-2.5 text-right font-semibold">Qté</th>
+                                    <th className="py-2.5 text-right font-semibold">TVA</th>
+                                    <th className="py-2.5 text-right font-semibold">Total HT</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-slate-100">
+                                {data.details.map((item, idx) => (
+                                    <tr key={idx} className="hover:bg-slate-50/50">
+                                        <td className="py-3 font-medium text-slate-800 pr-4">{item.desc}</td>
+                                        <td className="py-3 text-right text-slate-500 font-mono">
+                                            {item.pu > 0 ? formatEur(item.pu) : '—'}
+                                        </td>
+                                        <td className="py-3 text-right text-slate-500 font-mono">
+                                            {item.qty > 0 ? item.qty : '—'}
+                                        </td>
+                                        <td className="py-3 text-right text-slate-500 font-mono">
+                                            {item.tva}%
+                                        </td>
+                                        <td className="py-3 text-right font-semibold text-slate-900 font-mono">
+                                            {formatEur(item.ht)}
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {/* Optionals Block */}
+                    {data.options && data.options.length > 0 && (
+                        <div className="mt-6 pt-6 border-t border-slate-200">
+                            <h4 className="text-xs font-bold text-amber-600 uppercase tracking-wider mb-3">Prestations Optionnelles (hors total)</h4>
+                            <div className="space-y-3">
+                                {data.options.map((opt, idx) => (
+                                    <div key={idx} className="bg-amber-50/20 border border-amber-200/50 rounded-lg p-3 text-xs flex justify-between items-center gap-4">
+                                        <div>
+                                            <span className="font-semibold text-slate-800 block">{opt.desc}</span>
+                                            <span className="text-[10px] text-slate-500 mt-1 block">
+                                                PU : {formatEur(opt.pu)} HT — TVA {opt.tva}%
+                                            </span>
+                                        </div>
+                                        <div className="text-right">
+                                            <span className="font-bold text-amber-900 block font-mono">{formatEur(opt.ht)} HT</span>
+                                            <span className="text-[9px] text-slate-400 block font-mono">{formatEur(opt.ttc)} TTC</span>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                </div>
+            </div>
+
+            {/* Footer Recap Block */}
+            <div className="bg-slate-50 px-6 py-5 border-t border-slate-200/60 text-xs space-y-3">
+                <div className="flex justify-between items-center text-slate-600">
+                    <span>Prestation HT</span>
+                    <span className="font-semibold text-slate-800 font-mono">{formatEur(data.prestationHT)}</span>
+                </div>
+                <div className="flex justify-between items-center text-slate-500">
+                    <span>Prestation TTC (avec TVA)</span>
+                    <span className="font-semibold text-slate-700 font-mono">{formatEur(data.prestationTTC)}</span>
+                </div>
+                <div className="border-t border-slate-200 my-2"></div>
+                <div className="flex justify-between items-center text-slate-600">
+                    <span>Honoraires Agence HT (5%)</span>
+                    <span className="font-semibold text-slate-800 font-mono">{formatEur(data.honorairesHT)}</span>
+                </div>
+                <div className="flex justify-between items-center text-slate-500">
+                    <span>Honoraires Agence TTC (avec TVA)</span>
+                    <span className="font-semibold text-slate-700 font-mono">{formatEur(data.honorairesTTC)}</span>
+                </div>
+                <div className="border-t-2 border-[#00338D]/30 my-2 pt-2"></div>
+                <div className="flex justify-between items-center font-bold text-slate-900">
+                    <span className="text-[#00338D] uppercase font-bold tracking-wider">Cumul Total HT</span>
+                    <span className="text-base font-mono">{formatEur(data.totalHT)}</span>
+                </div>
+                <div className="flex justify-between items-center font-bold text-slate-500">
+                    <span>Cumul Total TTC</span>
+                    <span className="font-mono">{formatEur(data.totalTTC)}</span>
+                </div>
+                <div className="border-t border-slate-200/60 my-2 pt-2 text-[10px] flex justify-between items-center text-[#00338D]/90">
+                    <span>Tarif moyen par participant :</span>
+                    <span className="font-bold font-mono">
+                        {formatEur(data.totalHT / data.paxCount)} HT / pax ({formatEur(data.totalTTC / data.paxCount)} TTC)
+                    </span>
+                </div>
+            </div>
         </div>
     );
 }
