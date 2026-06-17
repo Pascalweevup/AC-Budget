@@ -4,596 +4,937 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WEEVUP x KPMG — Exemple de Budget</title>
-    <meta name="description" content="Simulateur et comparateur de budget pour l'événement KPMG">
-
-    <!-- Tailwind CSS via CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- React & ReactDOM via CDN -->
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-
-    <!-- Babel Standalone for JSX in-browser transpilation -->
-    <script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
-
+    <title>WEEVUP x KPMG - Exemple de budget (Lot 2)</title>
+    <meta name="description" content="Cas 3 : Convention annuelle + soirée de gala - 300 participants - lieu prestige">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&display=swap');
+        :root {
+            --kpmg-blue: #00338d;
+            --kpmg-dark: #0c2340;
+            --kpmg-cyan: #00a3a6;
+            --ink: #111827;
+            --muted: #64748b;
+            --line: #d7dde8;
+            --soft-line: #edf1f6;
+            --paper: #ffffff;
+            --page: #f4f7fb;
+            --section: #f8fafc;
+            --saving: #087f5b;
+            --danger: #b42318;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
 
         body {
-            font-family: 'Inter', sans-serif;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
+            margin: 0;
+            background: var(--page);
+            color: var(--ink);
+            font-family: Arial, Helvetica, sans-serif;
+            line-height: 1.45;
         }
 
-        h1, h2, h3, h4, .font-heading {
-            font-family: 'Outfit', sans-serif;
+        .page {
+            width: min(1180px, calc(100% - 32px));
+            margin: 24px auto 48px;
+            background: var(--paper);
+            border: 1px solid var(--line);
+            border-radius: 24px;
+            box-shadow: 0 20px 50px rgba(12, 35, 64, 0.12);
+            overflow: hidden;
         }
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(6px);
+        header {
+            background: linear-gradient(135deg, var(--kpmg-dark), var(--kpmg-blue));
+            color: white;
+            padding: 34px 40px 30px;
+            border-bottom: 5px solid var(--kpmg-cyan);
+        }
+
+        .brand-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 24px;
+            align-items: flex-start;
+            margin-bottom: 22px;
+        }
+
+        .brand {
+            font-size: 14px;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .case-label {
+            text-align: right;
+            font-size: 13px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.78);
+        }
+
+        h1 {
+            margin: 0;
+            max-width: 920px;
+            font-size: clamp(30px, 4.2vw, 54px);
+            line-height: 1;
+            letter-spacing: 0;
+        }
+
+        .mode {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 24px;
+            color: rgba(255, 255, 255, 0.88);
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .mode span {
+            border: 1px solid rgba(255, 255, 255, 0.22);
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 8px 10px;
+        }
+
+        main {
+            padding: 34px 40px 40px;
+        }
+
+        .summary {
+            display: grid;
+            grid-template-columns: minmax(240px, 1.1fr) repeat(3, minmax(160px, 0.8fr));
+            gap: 14px;
+            margin-bottom: 28px;
+            align-items: stretch;
+        }
+
+        .metric {
+            border: 1px solid var(--line);
+            background: var(--section);
+            border-radius: 18px;
+            padding: 20px;
+            min-height: 132px;
+            display: grid;
+            grid-template-rows: auto 1fr auto;
+            gap: 12px;
+        }
+
+        .metric.primary {
+            background: var(--kpmg-dark);
+            color: white;
+            border-color: var(--kpmg-dark);
+        }
+
+        .metric-label {
+            margin: 0;
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        .metric.primary .metric-label {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .metric-value {
+            font-size: clamp(24px, 3.2vw, 42px);
+            line-height: 1;
+            font-weight: 900;
+            letter-spacing: 0;
+            align-self: end;
+        }
+
+        .metric-value.small {
+            font-size: clamp(22px, 2.4vw, 32px);
+        }
+
+        .metric-note {
+            min-height: 31px;
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .metric.primary .metric-note {
+            color: rgba(255, 255, 255, 0.75);
+        }
+
+        .distribution {
+            grid-column: 1 / -1;
+            border: 1px solid var(--line);
+            background: white;
+            border-radius: 18px;
+            padding: 18px 20px;
+        }
+
+        .distribution-head {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            align-items: baseline;
+            margin-bottom: 14px;
+        }
+
+        .distribution-title {
+            margin: 0;
+            color: var(--kpmg-dark);
+            font-size: 13px;
+            font-weight: 900;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        .distribution-total {
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .stacked-bar {
+            display: flex;
+            height: 16px;
+            border-radius: 999px;
+            overflow: hidden;
+            background: var(--soft-line);
+            box-shadow: inset 0 0 0 1px rgba(12, 35, 64, 0.08);
+        }
+
+        .stacked-bar span {
+            display: block;
+            min-width: 3px;
+        }
+
+        .part-prestations {
+            background: var(--kpmg-blue);
+        }
+
+        .part-temps {
+            background: var(--kpmg-cyan);
+        }
+
+        .part-honoraires {
+            background: #7c3aed;
+        }
+
+        .part-assurance {
+            background: #f59e0b;
+        }
+
+        .part-portage {
+            background: #475569;
+        }
+
+        .distribution-legend {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        .legend-item {
+            border: 1px solid var(--soft-line);
+            border-radius: 14px;
+            padding: 10px;
+            background: var(--section);
+        }
+
+        .legend-label {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            color: var(--muted);
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        .legend-dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 999px;
+            flex: 0 0 auto;
+        }
+
+        .legend-value {
+            display: block;
+            margin-top: 7px;
+            color: var(--ink);
+            font-size: 15px;
+            font-weight: 900;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .legend-percent {
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        section {
+            margin-top: 26px;
+            border: 1px solid var(--line);
+            background: white;
+            border-radius: 18px;
+            overflow: hidden;
+        }
+
+        .section-title {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            align-items: center;
+            padding: 16px 18px;
+            background: var(--section);
+            border-bottom: 1px solid var(--line);
+        }
+
+        h2 {
+            margin: 0;
+            color: var(--kpmg-dark);
+            font-size: 18px;
+            line-height: 1.2;
+            letter-spacing: 0;
+        }
+
+        .section-total {
+            white-space: nowrap;
+            color: var(--kpmg-dark);
+            font-size: 16px;
+            font-weight: 900;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        th {
+            background: white;
+            color: var(--muted);
+            font-size: 11px;
+            letter-spacing: 0.04em;
+            text-align: left;
+            text-transform: uppercase;
+            border-bottom: 1px solid var(--line);
+            padding: 11px 12px;
+            white-space: nowrap;
+        }
+
+        td {
+            border-bottom: 1px solid var(--soft-line);
+            padding: 11px 12px;
+            vertical-align: top;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: 0;
+        }
+
+        .num {
+            text-align: right;
+            white-space: nowrap;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .center {
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .label {
+            font-weight: 700;
+        }
+
+        .subtotal td,
+        .total-ht td,
+        .total-ttc td {
+            font-weight: 900;
+        }
+
+        .subtotal td {
+            background: #eef5ff;
+            color: var(--kpmg-dark);
+        }
+
+        .total-ht td {
+            background: var(--kpmg-dark);
+            color: white;
+        }
+
+        .total-ttc td {
+            background: var(--kpmg-blue);
+            color: white;
+            font-size: 15px;
+        }
+
+        .saving {
+            color: var(--saving);
+            font-weight: 900;
+        }
+
+        .negative {
+            color: var(--danger);
+            font-weight: 900;
+        }
+
+        .conditions {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+            padding: 18px;
+        }
+
+        .condition {
+            border: 1px solid var(--line);
+            background: var(--section);
+            border-radius: 16px;
+            padding: 16px;
+        }
+
+        .condition h3 {
+            margin: 0 0 10px;
+            color: var(--kpmg-dark);
+            font-size: 14px;
+            line-height: 1.25;
+        }
+
+        .condition p {
+            margin: 0 0 16px;
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .condition strong {
+            display: block;
+            font-size: 26px;
+            line-height: 1;
+            color: var(--ink);
+        }
+
+        footer {
+            display: flex;
+            justify-content: space-between;
+            gap: 18px;
+            margin-top: 28px;
+            padding: 22px 0 0;
+            border-top: 1px solid var(--line);
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        @media (max-width: 920px) {
+            .page {
+                width: 100%;
+                margin: 0;
+                border-left: 0;
+                border-right: 0;
             }
-            to {
-                opacity: 1;
-                transform: translateY(0);
+
+            header,
+            main {
+                padding-left: 22px;
+                padding-right: 22px;
+            }
+
+            .brand-row,
+            footer {
+                flex-direction: column;
+            }
+
+            .case-label {
+                text-align: left;
+            }
+
+            .summary {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .distribution-legend {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .conditions {
+                grid-template-columns: 1fr;
             }
         }
 
-        .animate-fade-in {
-            animation: fadeIn 0.3s ease-out forwards;
+        @media (max-width: 620px) {
+            header,
+            main {
+                padding-left: 16px;
+                padding-right: 16px;
+            }
+
+            .summary {
+                grid-template-columns: 1fr;
+            }
+
+            .distribution-head {
+                flex-direction: column;
+                gap: 6px;
+            }
+
+            .distribution-legend {
+                grid-template-columns: 1fr;
+            }
+
+            .section-title {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            table {
+                font-size: 12px;
+            }
         }
 
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
+        @media print {
+            body {
+                background: white;
+            }
 
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
+            .page {
+                width: 100%;
+                margin: 0;
+                border: 0;
+                box-shadow: none;
+            }
 
-        ::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 3px;
-        }
+            header {
+                padding-top: 24px;
+            }
 
-        ::-webkit-scrollbar-thumb:hover {
-            background: #00338D;
+            main {
+                padding-bottom: 0;
+            }
+
+            section {
+                break-inside: avoid;
+            }
         }
     </style>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        kpmg: {
-                            blue: '#00338D',      // Deep Navy Blue
-                            medium: '#005F9E',    // Medium Blue
-                            light: '#00A3A6',     // Teal Accent
-                            slate: '#F2F4F7',     // Light Background
-                            dark: '#0C2340',      // Dark Slate
-                        }
-                    }
-                }
-            }
-        }
-    </script>
 </head>
 
-<body class="bg-slate-50 text-gray-800">
-    <div id="root"></div>
+<body>
+    <div class="page">
+        <header>
+            <div class="brand-row">
+                <div class="brand">WEEVUP x KPMG - EXEMPLE DE BUDGET (LOT 2)</div>
+                <div class="case-label">Cas 3</div>
+            </div>
+            <h1>Convention annuelle + soirée de gala - 300 participants - lieu prestige</h1>
+            <div class="mode">
+                <span>Mode : Clé en main (Gants Blancs)</span>
+                <span>Honoraires agence : 6% (event &gt; 100K)</span>
+                <span>Marge prestations : 0% (contrat de mandat)</span>
+                <span>Phase amont : 0%</span>
+            </div>
+        </header>
 
-    <script type="text/babel">
-        const { useState, useEffect } = React;
-
-        // --- UTILS ---
-        const formatEur = (value) => {
-            return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(value);
-        };
-
-        const formatPercent = (value) => {
-            return new Intl.NumberFormat('fr-FR', { style: 'percent', minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(value);
-        };
-
-        function App() {
-            // --- STATE FOR SECTION 1: TEMPS HOMME ---
-            const [tempsHomme, setTempsHomme] = useState([
-                { id: 1, profil: "Marilou - Cheffe de projet senior", seniorite: "E4", tjm: 850, preprod: 8, jourj: 2 },
-                { id: 2, profil: "Directeur de Projet", seniorite: "E5", tjm: 1100, preprod: 3, jourj: 2 },
-                { id: 3, profil: "Chef de Projet Evénementiel", seniorite: "E3", tjm: 600, preprod: 5, jourj: 2 },
-                { id: 4, profil: "Assistant événementiel Junior", seniorite: "E1", tjm: 380, preprod: 5, jourj: 2 },
-                { id: 5, profil: "Directeur Technique", seniorite: "E3", tjm: 800, preprod: 2, jourj: 2 },
-                { id: 6, profil: "Directeur Artistique", seniorite: "E4", tjm: 750, preprod: 3, jourj: 2 },
-                { id: 7, profil: "Graphiste Senior (sceno / contenus)", seniorite: "E2", tjm: 520, preprod: 3, jourj: 2 }
-            ]);
-
-            const [majorationGala, setMajorationGala] = useState(1565);
-            const [majorationTardive, setMajorationTardive] = useState(1650);
-
-            // --- STATE FOR SECTION 2: PRESTATIONS ---
-            const [prestations, setPrestations] = useState([
-                { id: 1, poste: "Location lieu prestige (2 jours)", brut: 32000, savings: 4000, note: "" },
-                { id: 2, poste: "Production scenique (scene, son, lumiere, video, regie)", brut: 38000, savings: 4500, note: "" },
-                { id: 3, poste: "Traiteur - Diner de gala (300 couverts)", brut: 25500, savings: 2700, note: "85,00 € × 300 pers." },
-                { id: 4, poste: "Traiteur - Autres repas convention (dejeuners, pauses)", brut: 27000, savings: 800, note: "45,00 € × 600 pers." },
-                { id: 5, poste: "Hebergement (150 chambres twins x 1 nuit)", brut: 42000, savings: 3500, note: "280,00 € × 150 ch." },
-                { id: 6, poste: "Retrocommission hebergement (-10%, reversee au client)", brut: 0, savings: 4200, isRefund: true, note: "Reversement client" },
-                { id: 7, poste: "Transport (navettes & transferts)", brut: 9000, savings: 800, note: "" },
-                { id: 8, poste: "Animation & artistes (gala)", brut: 14000, savings: 1000, note: "" },
-                { id: 9, poste: "Impression badges", brut: 750, savings: 100, note: "" },
-                { id: 10, poste: "Hôtesses & Sécurité", brut: 2200, savings: 150, note: "" },
-                { id: 11, poste: "Decoration / scenographie / securite", brut: 10000, savings: 1200, note: "" },
-                { id: 12, poste: "VHR equipe - Transport (location 2 vehicules + peages/essence)", brut: 2200, savings: 0, note: "" },
-                { id: 13, poste: "VHR equipe - Hebergement (6 weevers x 1 nuit)", brut: 840, savings: 0, note: "140,00 € × 6 pers." },
-                { id: 14, poste: "VHR equipe - Restauration (6 weevers x 2 jours)", brut: 480, savings: 0, note: "40,00 € × 12 repas" },
-                { id: 15, poste: "Bilan carbone de l'evenement (a chiffrer)", brut: 0, savings: 0, note: "À chiffrer" }
-            ]);
-
-            // --- CALCULATIONS FOR TEMPS HOMME ---
-            const calculatedTempsHomme = tempsHomme.map(item => {
-                const totalJours = item.preprod + item.jourj;
-                const totalEur = totalJours * item.tjm;
-                return { ...item, totalJours, totalEur };
-            });
-
-            const totalPreprodDays = calculatedTempsHomme.reduce((sum, item) => sum + item.preprod, 0);
-            const totalJourJDays = calculatedTempsHomme.reduce((sum, item) => sum + item.jourj, 0);
-            const totalDays = calculatedTempsHomme.reduce((sum, item) => sum + item.totalJours, 0);
-            const subtotalTempsHomme = calculatedTempsHomme.reduce((sum, item) => sum + item.totalEur, 0) + majorationGala + majorationTardive;
-
-            // --- CALCULATIONS FOR PRESTATIONS ---
-            const calculatedPrestations = prestations.map(item => {
-                let net = 0;
-                if (item.isRefund) {
-                    net = -item.savings;
-                } else {
-                    net = item.brut - item.savings;
-                }
-                return { ...item, net };
-            });
-
-            const totalBrutPrestations = calculatedPrestations.reduce((sum, item) => sum + (item.isRefund ? 0 : item.brut), 0);
-            const totalSavingsPrestations = calculatedPrestations.reduce((sum, item) => sum + item.savings, 0);
-            const subtotalPrestationsNet = calculatedPrestations.reduce((sum, item) => sum + item.net, 0);
-
-            // --- SYNTHESE DE REMUNERATION ---
-            const basePrestationsRefacturees = subtotalPrestationsNet + subtotalTempsHomme;
-            const honorairesAgence = Math.round(basePrestationsRefacturees * 0.06);
-            const assurance = Math.round(basePrestationsRefacturees * 0.008);
-            const fraisPortage = Math.round(basePrestationsRefacturees * 0.04);
-            const totalHT = basePrestationsRefacturees + honorairesAgence + assurance + fraisPortage;
-            const tva = Math.round(totalHT * 0.20);
-            const totalTTC = totalHT + tva;
-
-            // --- ECHEANCIER ---
-            const acompte = Math.round(totalTTC * 0.30);
-            const solde = totalTTC - acompte;
-
-            // --- HANDLERS FOR INTERACTIVE FIELDS ---
-            const handleTempsHommeChange = (id, field, value) => {
-                const numVal = parseFloat(value) || 0;
-                setTempsHomme(prev => prev.map(item => item.id === id ? { ...item, [field]: numVal } : item));
-            };
-
-            const handlePrestationChange = (id, field, value) => {
-                const numVal = parseFloat(value) || 0;
-                setPrestations(prev => prev.map(item => item.id === id ? { ...item, [field]: numVal } : item));
-            };
-
-            return (
-                <div className="min-h-screen bg-slate-50 pb-16">
-                    {/* Header */}
-                    <header className="bg-kpmg-dark text-white border-b-4 border-kpmg-light shadow-md sticky top-0 z-40">
-                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
-                            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-                                <div>
-                                    <div className="flex items-center gap-3">
-                                        <span className="bg-kpmg-blue font-bold px-3 py-1 text-xs tracking-wider uppercase rounded border border-white/20">WEEVUP x KPMG</span>
-                                        <span className="bg-kpmg-light/20 text-kpmg-light font-semibold px-2.5 py-0.5 text-xs rounded-full border border-kpmg-light/30">Exemple de budget (Lot 2)</span>
-                                    </div>
-                                    <h1 className="text-2xl lg:text-3xl font-extrabold tracking-tight mt-2 font-heading">
-                                        Cas 3 : Convention annuelle + soirée de gala
-                                    </h1>
-                                    <p className="text-xs lg:text-sm text-slate-300 mt-1">
-                                        300 participants — Lieu prestige | Mode : Clé en main (Gants Blancs) | Marge prestations : 0% | Phase amont : 0%
-                                    </p>
-                                </div>
-                                <div className="text-right bg-white/5 px-4 py-2 rounded-xl border border-white/10">
-                                    <span className="text-[10px] text-slate-400 block uppercase font-bold tracking-wider">Budget Global</span>
-                                    <span className="text-2xl lg:text-3xl font-extrabold text-white block font-heading">{formatEur(totalTTC)} <span className="text-xs font-normal text-slate-300">TTC</span></span>
-                                </div>
-                            </div>
-                        </div>
-                    </header>
-
-                    {/* Main Content */}
-                    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10">
-
-                        {/* RÉSUMÉ DE L'OFFRE (TOP SECTION) */}
-                        <section className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 lg:p-8 space-y-8 animate-fade-in">
-                            <div className="border-b border-slate-100 pb-4">
-                                <h2 className="text-xl lg:text-2xl font-bold text-kpmg-dark font-heading">Résumé Financier de l'Offre</h2>
-                                <p className="text-xs lg:text-sm text-slate-500 mt-1">Récapitulatif des indicateurs clés et répartition analytique du budget.</p>
-                            </div>
-
-                            {/* Indicators Grid */}
-                            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                                <div className="bg-gradient-to-br from-kpmg-dark to-kpmg-blue text-white p-5 rounded-2xl shadow-sm flex flex-col justify-between">
-                                    <span className="text-xs uppercase font-bold text-slate-300 tracking-wider">Total Budget TTC</span>
-                                    <span className="text-2xl lg:text-3xl font-black mt-2 font-heading">{formatEur(totalTTC)}</span>
-                                    <span className="text-[10px] text-slate-300 mt-2 block">TVA 20% incluse ({formatEur(tva)})</span>
-                                </div>
-
-                                <div className="bg-slate-50 border border-slate-200 p-5 rounded-2xl flex flex-col justify-between">
-                                    <span className="text-xs uppercase font-bold text-slate-500 tracking-wider">Total HT</span>
-                                    <span className="text-2xl lg:text-3xl font-black text-kpmg-dark mt-2 font-heading">{formatEur(totalHT)}</span>
-                                    <span className="text-[10px] text-slate-400 mt-2 block">Base de facturation</span>
-                                </div>
-
-                                <div className="bg-emerald-50 border border-emerald-200 p-5 rounded-2xl flex flex-col justify-between">
-                                    <span className="text-xs uppercase font-bold text-emerald-700 tracking-wider">Savings négociés</span>
-                                    <span className="text-2xl lg:text-3xl font-black text-emerald-800 mt-2 font-heading">{formatEur(totalSavingsPrestations)}</span>
-                                    <span className="text-[10px] text-emerald-600 mt-2 block">Remises reversées à 100%</span>
-                                </div>
-
-                                <div className="bg-sky-50 border border-sky-200 p-5 rounded-2xl flex flex-col justify-between">
-                                    <span className="text-xs uppercase font-bold text-sky-700 tracking-wider">Coût par participant</span>
-                                    <span className="text-2xl lg:text-3xl font-black text-sky-800 mt-2 font-heading">{formatEur(totalHT / 300)} <span className="text-xs font-normal">HT</span></span>
-                                    <span className="text-[10px] text-sky-600 mt-2 block">Base 300 participants</span>
-                                </div>
-                            </div>
-
-                            {/* Unified Bar / Gauges per Section */}
-                            <div className="space-y-6 pt-4">
-                                <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wider">Répartition du Budget HT</h3>
-                                
-                                {/* Stacked Progress Bar */}
-                                <div className="w-full h-5 rounded-full overflow-hidden bg-slate-100 flex shadow-inner">
-                                    <div 
-                                        className="bg-kpmg-blue transition-all duration-500" 
-                                        style={{ width: `${(subtotalTempsHomme / totalHT) * 100}%` }}
-                                        title={`Temps Homme: ${formatPercent(subtotalTempsHomme / totalHT)}`}
-                                    ></div>
-                                    <div 
-                                        className="bg-kpmg-light transition-all duration-500" 
-                                        style={{ width: `${(subtotalPrestationsNet / totalHT) * 100}%` }}
-                                        title={`Prestations: ${formatPercent(subtotalPrestationsNet / totalHT)}`}
-                                    ></div>
-                                    <div 
-                                        className="bg-amber-500 transition-all duration-500" 
-                                        style={{ width: `${((honorairesAgence + assurance + fraisPortage) / totalHT) * 100}%` }}
-                                        title={`Honoraires & Frais: ${formatPercent((honorairesAgence + assurance + fraisPortage) / totalHT)}`}
-                                    ></div>
-                                </div>
-
-                                {/* Gauges details */}
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                    <div className="bg-white border border-slate-100 p-4 rounded-xl shadow-xs space-y-2">
-                                        <div className="flex justify-between text-xs font-semibold">
-                                            <span className="text-slate-600 flex items-center gap-2">
-                                                <span className="w-3 h-3 rounded-full bg-kpmg-blue"></span>
-                                                1. Temps Homme (Agence)
-                                            </span>
-                                            <span className="text-slate-900 font-bold">{formatEur(subtotalTempsHomme)} ({formatPercent(subtotalTempsHomme / totalHT)})</span>
-                                        </div>
-                                        <div className="w-full bg-slate-100 rounded-full h-2">
-                                            <div className="bg-kpmg-blue h-2 rounded-full transition-all duration-500" style={{ width: `${(subtotalTempsHomme / totalHT) * 100}%` }}></div>
-                                        </div>
-                                    </div>
-
-                                    <div className="bg-white border border-slate-100 p-4 rounded-xl shadow-xs space-y-2">
-                                        <div className="flex justify-between text-xs font-semibold">
-                                            <span className="text-slate-600 flex items-center gap-2">
-                                                <span className="w-3 h-3 rounded-full bg-kpmg-light"></span>
-                                                2. Prestations Événement (Net)
-                                            </span>
-                                            <span className="text-slate-900 font-bold">{formatEur(subtotalPrestationsNet)} ({formatPercent(subtotalPrestationsNet / totalHT)})</span>
-                                        </div>
-                                        <div className="w-full bg-slate-100 rounded-full h-2">
-                                            <div className="bg-kpmg-light h-2 rounded-full transition-all duration-500" style={{ width: `${(subtotalPrestationsNet / totalHT) * 100}%` }}></div>
-                                        </div>
-                                    </div>
-
-                                    <div className="bg-white border border-slate-100 p-4 rounded-xl shadow-xs space-y-2">
-                                        <div className="flex justify-between text-xs font-semibold">
-                                            <span className="text-slate-600 flex items-center gap-2">
-                                                <span className="w-3 h-3 rounded-full bg-amber-500"></span>
-                                                3. Honoraires, Portage & Assurances
-                                            </span>
-                                            <span className="text-slate-900 font-bold">{formatEur(honorairesAgence + assurance + fraisPortage)} ({formatPercent((honorairesAgence + assurance + fraisPortage) / totalHT)})</span>
-                                        </div>
-                                        <div className="w-full bg-slate-100 rounded-full h-2">
-                                            <div className="bg-amber-500 h-2 rounded-full transition-all duration-500" style={{ width: `${((honorairesAgence + assurance + fraisPortage) / totalHT) * 100}%` }}></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </section>
-
-
-                        {/* BUDGET DETAILS SECTION */}
-                        <section className="space-y-8 animate-fade-in">
-                            <div className="flex items-center gap-2 border-b border-slate-200 pb-3">
-                                <span className="w-2.5 h-6 rounded-full bg-kpmg-blue"></span>
-                                <h2 className="text-2xl font-bold text-kpmg-dark font-heading">Détails de l'Offre Financière</h2>
-                            </div>
-
-                            {/* Legend warning for user interaction */}
-                            <div className="bg-blue-50 border border-blue-200 text-blue-800 p-4 rounded-xl flex items-start gap-3 text-xs md:text-sm">
-                                <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-blue-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                                <div>
-                                    <span className="font-bold">Mode Interactif Activé :</span> Les cellules en <span className="bg-blue-100 border border-blue-300 text-blue-900 px-1 py-0.5 rounded font-bold">bleu clair</span> sont modifiables en direct. Les cellules en <span className="bg-slate-100 border border-slate-300 text-slate-900 px-1 py-0.5 rounded font-bold">gris</span> correspondent aux calculs automatiques.
-                                </div>
-                            </div>
-
-                            {/* 1. TEMPS HOMME TABLE */}
-                            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-                                <div className="bg-kpmg-slate px-6 py-4 border-b border-slate-200 flex justify-between items-center">
-                                    <h3 className="font-bold text-kpmg-dark font-heading flex items-center gap-2">
-                                        <span className="bg-kpmg-blue text-white text-[10px] uppercase font-bold px-2 py-0.5 rounded">1</span>
-                                        1. TEMPS HOMME (équipe agence)
-                                    </h3>
-                                    <span className="text-xs text-slate-500 font-mono">Sous-total : {formatEur(subtotalTempsHomme)}</span>
-                                </div>
-                                <div className="overflow-x-auto">
-                                    <table className="w-full text-xs text-left border-collapse">
-                                        <thead>
-                                            <tr className="bg-slate-50 text-slate-500 border-b border-slate-200">
-                                                <th className="py-3 px-4 font-semibold">Profil</th>
-                                                <th className="py-3 px-4 font-semibold text-center">Seniorité</th>
-                                                <th className="py-3 px-4 font-semibold text-right w-32">TJM (EUR)</th>
-                                                <th className="py-3 px-4 font-semibold text-right w-24">Jours preprod</th>
-                                                <th className="py-3 px-4 font-semibold text-right w-24">Jours Jour J</th>
-                                                <th className="py-3 px-4 font-semibold text-right w-24">Total jours</th>
-                                                <th className="py-3 px-4 font-semibold text-right w-36">Total EUR</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="divide-y divide-slate-100">
-                                            {calculatedTempsHomme.map((item) => (
-                                                <tr key={item.id} className="hover:bg-slate-50/50">
-                                                    <td className="py-3.5 px-4 font-medium text-slate-800">{item.profil}</td>
-                                                    <td className="py-3.5 px-4 text-center font-semibold text-slate-500">{item.seniorite}</td>
-                                                    <td className="py-2 px-2 text-right">
-                                                        <input 
-                                                            type="number" 
-                                                            value={item.tjm} 
-                                                            onChange={(e) => handleTempsHommeChange(item.id, 'tjm', e.target.value)}
-                                                            className="w-full text-right px-2 py-1.5 border border-blue-200 bg-blue-50/30 rounded focus:ring-1 focus:ring-kpmg-blue focus:bg-white font-semibold text-slate-700 outline-none"
-                                                        />
-                                                    </td>
-                                                    <td className="py-2 px-2 text-right">
-                                                        <input 
-                                                            type="number" 
-                                                            value={item.preprod} 
-                                                            onChange={(e) => handleTempsHommeChange(item.id, 'preprod', e.target.value)}
-                                                            className="w-full text-right px-2 py-1.5 border border-blue-200 bg-blue-50/30 rounded focus:ring-1 focus:ring-kpmg-blue focus:bg-white font-semibold text-slate-700 outline-none"
-                                                        />
-                                                    </td>
-                                                    <td className="py-2 px-2 text-right">
-                                                        <input 
-                                                            type="number" 
-                                                            value={item.jourj} 
-                                                            onChange={(e) => handleTempsHommeChange(item.id, 'jourj', e.target.value)}
-                                                            className="w-full text-right px-2 py-1.5 border border-blue-200 bg-blue-50/30 rounded focus:ring-1 focus:ring-kpmg-blue focus:bg-white font-semibold text-slate-700 outline-none"
-                                                        />
-                                                    </td>
-                                                    <td className="py-3.5 px-4 text-right font-mono font-bold text-slate-700 bg-slate-50/30">{item.totalJours}</td>
-                                                    <td className="py-3.5 px-4 text-right font-mono font-bold text-slate-900 bg-slate-50/30">{formatEur(item.totalEur)}</td>
-                                                </tr>
-                                            ))}
-                                            {/* Majorations rows */}
-                                            <tr className="bg-slate-50/20">
-                                                <td colSpan="5" className="py-3 px-4 font-semibold text-slate-600">Majoration soirée de gala (+50% / 4 pax sur place)</td>
-                                                <td className="py-2 px-2 text-right" colSpan="2">
-                                                    <input 
-                                                        type="number" 
-                                                        value={majorationGala} 
-                                                        onChange={(e) => setMajorationGala(parseFloat(e.target.value) || 0)}
-                                                        className="w-36 text-right px-2 py-1.5 border border-blue-200 bg-blue-50/30 rounded focus:ring-1 focus:ring-kpmg-blue focus:bg-white font-semibold text-slate-700 outline-none ml-auto block"
-                                                    />
-                                                </td>
-                                            </tr>
-                                            <tr className="bg-slate-50/20">
-                                                <td colSpan="5" className="py-3 px-4 font-semibold text-slate-600">Majoration soirée tardive après minuit (+100% / 2 pax)</td>
-                                                <td className="py-2 px-2 text-right" colSpan="2">
-                                                    <input 
-                                                        type="number" 
-                                                        value={majorationTardive} 
-                                                        onChange={(e) => setMajorationTardive(parseFloat(e.target.value) || 0)}
-                                                        className="w-36 text-right px-2 py-1.5 border border-blue-200 bg-blue-50/30 rounded focus:ring-1 focus:ring-kpmg-blue focus:bg-white font-semibold text-slate-700 outline-none ml-auto block"
-                                                    />
-                                                </td>
-                                            </tr>
-                                            {/* Subtotal row */}
-                                            <tr className="bg-kpmg-dark text-white font-bold text-xs">
-                                                <td colSpan="3" className="py-4 px-4">Sous-total temps homme</td>
-                                                <td className="py-4 px-4 text-right font-mono">{totalPreprodDays}</td>
-                                                <td className="py-4 px-4 text-right font-mono">{totalJourJDays}</td>
-                                                <td className="py-4 px-4 text-right font-mono">{totalDays}</td>
-                                                <td className="py-4 px-4 text-right font-mono">{formatEur(subtotalTempsHomme)}</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-
-                            {/* 2. PRESTATIONS EVENT TABLE */}
-                            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-                                <div className="bg-kpmg-slate px-6 py-4 border-b border-slate-200 flex justify-between items-center">
-                                    <h3 className="font-bold text-kpmg-dark font-heading flex items-center gap-2">
-                                        <span className="bg-kpmg-light text-white text-[10px] uppercase font-bold px-2 py-0.5 rounded">2</span>
-                                        2. PRESTATIONS ÉVÉNEMENT (refacturées au réel - marge 0%)
-                                    </h3>
-                                    <span className="text-xs text-slate-500 font-mono">Sous-total : {formatEur(subtotalPrestationsNet)}</span>
-                                </div>
-                                <div className="overflow-x-auto">
-                                    <table className="w-full text-xs text-left border-collapse">
-                                        <thead>
-                                            <tr className="bg-slate-50 text-slate-500 border-b border-slate-200">
-                                                <th className="py-3 px-4 font-semibold">Poste</th>
-                                                <th className="py-3 px-4 font-semibold text-right w-36">Montant brut fournisseur</th>
-                                                <th className="py-3 px-4 font-semibold text-right w-36">Savings négocié (EUR)</th>
-                                                <th className="py-3 px-4 font-semibold text-right w-36">Montant net refacturé</th>
-                                                <th className="py-3 px-4 font-semibold text-left w-48">Détails / Quantité</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="divide-y divide-slate-100">
-                                            {calculatedPrestations.map((item) => (
-                                                <tr key={item.id} className="hover:bg-slate-50/50">
-                                                    <td className="py-3.5 px-4 font-medium text-slate-800">{item.poste}</td>
-                                                    <td className="py-2 px-2 text-right font-mono">
-                                                        {!item.isRefund ? (
-                                                            <input 
-                                                                type="number" 
-                                                                value={item.brut} 
-                                                                onChange={(e) => handlePrestationChange(item.id, 'brut', e.target.value)}
-                                                                className="w-full text-right px-2 py-1.5 border border-blue-200 bg-blue-50/30 rounded focus:ring-1 focus:ring-kpmg-blue focus:bg-white font-semibold text-slate-700 outline-none"
-                                                            />
-                                                        ) : (
-                                                            <span className="text-slate-400 font-normal italic pr-2">Sans objet</span>
-                                                        )}
-                                                    </td>
-                                                    <td className="py-2 px-2 text-right font-mono">
-                                                        <input 
-                                                            type="number" 
-                                                            value={item.savings} 
-                                                            onChange={(e) => handlePrestationChange(item.id, 'savings', e.target.value)}
-                                                            className="w-full text-right px-2 py-1.5 border border-blue-200 bg-blue-50/30 rounded focus:ring-1 focus:ring-kpmg-blue focus:bg-white font-semibold text-slate-700 outline-none"
-                                                        />
-                                                    </td>
-                                                    <td className={`py-3.5 px-4 text-right font-mono font-bold bg-slate-50/30 ${item.net < 0 ? 'text-red-600' : 'text-slate-900'}`}>
-                                                        {formatEur(item.net)}
-                                                    </td>
-                                                    <td className="py-3.5 px-4 text-slate-500 font-medium">{item.note}</td>
-                                                </tr>
-                                            ))}
-                                            {/* Subtotal row */}
-                                            <tr className="bg-kpmg-medium text-white font-bold text-xs">
-                                                <td className="py-4 px-4">Sous-total prestations</td>
-                                                <td className="py-4 px-4 text-right font-mono">{formatEur(totalBrutPrestations)}</td>
-                                                <td className="py-4 px-4 text-right font-mono">{formatEur(totalSavingsPrestations)}</td>
-                                                <td className="py-4 px-4 text-right font-mono">{formatEur(subtotalPrestationsNet)}</td>
-                                                <td className="py-4 px-4"></td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-
-                            {/* 3. SYNTHESE & FACTURATION */}
-                            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                                <div className="lg:col-span-7 bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-                                    <div className="bg-kpmg-slate px-6 py-4 border-b border-slate-200">
-                                        <h3 className="font-bold text-kpmg-dark font-heading flex items-center gap-2">
-                                            <span className="bg-amber-500 text-white text-[10px] uppercase font-bold px-2 py-0.5 rounded">3</span>
-                                            3. SYNTHÈSE DE RÉMUNÉRATION & FACTURATION
-                                        </h3>
-                                    </div>
-                                    <div className="p-6">
-                                        <table className="w-full text-xs text-left border-collapse">
-                                            <thead>
-                                                <tr className="border-b border-slate-100 text-slate-400">
-                                                    <th className="py-2.5 font-semibold">Poste</th>
-                                                    <th className="py-2.5 text-center font-semibold w-32">Base / Taux</th>
-                                                    <th className="py-2.5 text-right font-semibold w-32">Montant (EUR)</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody className="divide-y divide-slate-100">
-                                                <tr>
-                                                    <td className="py-3 font-medium text-slate-800">Prestations refacturées (net, marge 0%)</td>
-                                                    <td className="py-3 text-center text-slate-500">Au réel</td>
-                                                    <td className="py-3 text-right font-mono font-bold text-slate-900">{formatEur(basePrestationsRefacturees)}</td>
-                                                </tr>
-                                                <tr>
-                                                    <td className="py-3 font-medium text-slate-800">Honoraires agence</td>
-                                                    <td className="py-3 text-center text-slate-500">6% (event &gt; 100K)</td>
-                                                    <td className="py-3 text-right font-mono font-bold text-slate-900">{formatEur(honorairesAgence)}</td>
-                                                </tr>
-                                                <tr>
-                                                    <td className="py-3 font-medium text-slate-800">Assurance</td>
-                                                    <td className="py-3 text-center text-slate-500">0,8%</td>
-                                                    <td className="py-3 text-right font-mono font-bold text-slate-900">{formatEur(assurance)}</td>
-                                                </tr>
-                                                <tr>
-                                                    <td className="py-3 font-medium text-slate-800">Frais de portage</td>
-                                                    <td className="py-3 text-center text-slate-500">4% (0% si carte logée)</td>
-                                                    <td className="py-3 text-right font-mono font-bold text-slate-900">{formatEur(fraisPortage)}</td>
-                                                </tr>
-                                                <tr className="bg-slate-50 font-bold">
-                                                    <td className="py-3 px-2 font-bold text-kpmg-dark">TOTAL HT</td>
-                                                    <td className="py-3 text-center"></td>
-                                                    <td className="py-3 px-2 text-right font-mono text-kpmg-dark text-sm">{formatEur(totalHT)}</td>
-                                                </tr>
-                                                <tr>
-                                                    <td className="py-3 font-medium text-slate-500">TVA 20%</td>
-                                                    <td className="py-3 text-center">20%</td>
-                                                    <td className="py-3 text-right font-mono font-bold text-slate-700">{formatEur(tva)}</td>
-                                                </tr>
-                                                <tr className="bg-kpmg-dark text-white font-extrabold">
-                                                    <td className="py-3 px-4 uppercase rounded-l-lg">TOTAL TTC</td>
-                                                    <td className="py-3 text-center"></td>
-                                                    <td className="py-3 px-4 text-right font-mono text-base rounded-r-lg">{formatEur(totalTTC)}</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-
-                                {/* 4. ECHEANCIER & CONDITIONS */}
-                                <div className="lg:col-span-5 bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col justify-between">
-                                    <div>
-                                        <div className="bg-kpmg-slate px-6 py-4 border-b border-slate-200">
-                                            <h3 className="font-bold text-kpmg-dark font-heading flex items-center gap-2">
-                                                <span className="bg-slate-600 text-white text-[10px] uppercase font-bold px-2 py-0.5 rounded">4</span>
-                                                4. ECHEANCIER & CONDITIONS
-                                            </h3>
-                                        </div>
-                                        <div className="p-6 space-y-4">
-                                            <div className="border border-slate-100 rounded-xl p-4 flex justify-between items-center bg-slate-50/50">
-                                                <div>
-                                                    <h4 className="font-bold text-slate-800 text-xs">Acompte à la commande</h4>
-                                                    <p className="text-[10px] text-slate-500 mt-1">30% à la commande (plafond légal)</p>
-                                                </div>
-                                                <span className="font-mono font-bold text-slate-900 text-sm">{formatEur(acompte)}</span>
-                                            </div>
-
-                                            <div className="border border-slate-100 rounded-xl p-4 flex justify-between items-center bg-slate-50/50">
-                                                <div>
-                                                    <h4 className="font-bold text-slate-800 text-xs">Solde (facture unique)</h4>
-                                                    <p className="text-[10px] text-slate-500 mt-1">Solde à 45 jours fin de mois</p>
-                                                </div>
-                                                <span className="font-mono font-bold text-slate-900 text-sm">{formatEur(solde)}</span>
-                                            </div>
-
-                                            <div className="border border-emerald-100 rounded-xl p-4 flex justify-between items-center bg-emerald-50/20">
-                                                <div>
-                                                    <h4 className="font-bold text-emerald-800 text-xs">Savings pour KPMG</h4>
-                                                    <p className="text-[10px] text-emerald-600 mt-1">Remises & gratuités négociées</p>
-                                                </div>
-                                                <span className="font-mono font-bold text-emerald-800 text-sm">{formatEur(totalSavingsPrestations)}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="bg-slate-50 px-6 py-4 border-t border-slate-100 text-[10px] text-slate-400 leading-relaxed italic">
-                                        Remises négociées, reversées à 100% (obligation de moyens de -10% à -20%).
-                                    </div>
-                                </div>
-                            </div>
-                        </section>
-
-                    </main>
+        <main>
+            <div class="summary" aria-label="Synthèse du budget">
+                <div class="metric primary">
+                    <p class="metric-label">TOTAL TTC</p>
+                    <div class="metric-value">289 221 €</div>
+                    <div class="metric-note">TVA 20% : 48 204 €</div>
                 </div>
-            );
-        }
+                <div class="metric">
+                    <p class="metric-label">TOTAL HT</p>
+                    <div class="metric-value small">241 018 €</div>
+                    <div class="metric-note"></div>
+                </div>
+                <div class="metric">
+                    <p class="metric-label">Honoraires agence</p>
+                    <div class="metric-value small">13 052 €</div>
+                    <div class="metric-note">6% (event &gt; 100K)</div>
+                </div>
+                <div class="metric">
+                    <p class="metric-label">Savings pour KPMG</p>
+                    <div class="metric-value small saving">18 750 €</div>
+                    <div class="metric-note">Remises & gratuités négociées, reversées à 100%</div>
+                </div>
+                <div class="distribution">
+                    <div class="distribution-head">
+                        <p class="distribution-title">Répartition des postes</p>
+                        <span class="distribution-total">TOTAL HT : 241 018 €</span>
+                    </div>
+                    <div class="stacked-bar" aria-label="Répartition des postes du total HT">
+                        <span class="part-prestations" style="width: 75.1%"></span>
+                        <span class="part-temps" style="width: 15.1%"></span>
+                        <span class="part-honoraires" style="width: 5.4%"></span>
+                        <span class="part-assurance" style="width: 0.7%"></span>
+                        <span class="part-portage" style="width: 3.6%"></span>
+                    </div>
+                    <div class="distribution-legend">
+                        <div class="legend-item">
+                            <span class="legend-label"><span class="legend-dot part-prestations"></span>Prestations</span>
+                            <span class="legend-value">181 020 €</span>
+                            <span class="legend-percent">75,1%</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-label"><span class="legend-dot part-temps"></span>Temps homme</span>
+                            <span class="legend-value">36 505 €</span>
+                            <span class="legend-percent">15,1%</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-label"><span class="legend-dot part-honoraires"></span>Honoraires</span>
+                            <span class="legend-value">13 052 €</span>
+                            <span class="legend-percent">5,4%</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-label"><span class="legend-dot part-assurance"></span>Assurance</span>
+                            <span class="legend-value">1 740 €</span>
+                            <span class="legend-percent">0,7%</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-label"><span class="legend-dot part-portage"></span>Frais de portage</span>
+                            <span class="legend-value">8 701 €</span>
+                            <span class="legend-percent">3,6%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
-    </script>
+            <section>
+                <div class="section-title">
+                    <h2>1. TEMPS HOMME (équipe agence)</h2>
+                    <div class="section-total">36 505 €</div>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Profil</th>
+                                <th>Seniorité</th>
+                                <th class="num">TJM (EUR)</th>
+                                <th class="num">Jours préprod</th>
+                                <th class="num">Jours Jour J</th>
+                                <th class="num">Total jours</th>
+                                <th class="num">Total EUR</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="label">Marilou - Cheffe de projet senior</td>
+                                <td class="center">E4</td>
+                                <td class="num">850 €</td>
+                                <td class="num">8</td>
+                                <td class="num">2</td>
+                                <td class="num">10</td>
+                                <td class="num">8 500 €</td>
+                            </tr>
+                            <tr>
+                                <td class="label">Directeur de Projet</td>
+                                <td class="center">E5</td>
+                                <td class="num">1 100 €</td>
+                                <td class="num">4</td>
+                                <td class="num">2</td>
+                                <td class="num">6</td>
+                                <td class="num">6 600 €</td>
+                            </tr>
+                            <tr>
+                                <td class="label">Chef de Projet Événementiel</td>
+                                <td class="center">E3</td>
+                                <td class="num">600 €</td>
+                                <td class="num">6</td>
+                                <td class="num">2</td>
+                                <td class="num">8</td>
+                                <td class="num">4 800 €</td>
+                            </tr>
+                            <tr>
+                                <td class="label">Assistant événementiel Junior</td>
+                                <td class="center">E1</td>
+                                <td class="num">380 €</td>
+                                <td class="num">6</td>
+                                <td class="num">2</td>
+                                <td class="num">8</td>
+                                <td class="num">3 040 €</td>
+                            </tr>
+                            <tr>
+                                <td class="label">Directeur Technique</td>
+                                <td class="center">E3</td>
+                                <td class="num">800 €</td>
+                                <td class="num">3</td>
+                                <td class="num">2</td>
+                                <td class="num">5</td>
+                                <td class="num">4 000 €</td>
+                            </tr>
+                            <tr>
+                                <td class="label">Directeur Artistique</td>
+                                <td class="center">E4</td>
+                                <td class="num">750 €</td>
+                                <td class="num">3</td>
+                                <td class="num">2</td>
+                                <td class="num">5</td>
+                                <td class="num">3 750 €</td>
+                            </tr>
+                            <tr>
+                                <td class="label">Graphiste Senior (scéno / contenus)</td>
+                                <td class="center">E2</td>
+                                <td class="num">520 €</td>
+                                <td class="num">3</td>
+                                <td class="num">2</td>
+                                <td class="num">5</td>
+                                <td class="num">2 600 €</td>
+                            </tr>
+                            <tr>
+                                <td class="label" colspan="6">Majoration soirée de gala (+50% / 4 pax sur place)</td>
+                                <td class="num">1 565 €</td>
+                            </tr>
+                            <tr>
+                                <td class="label" colspan="6">Majoration soirée tardive après minuit (+100% / 2 pax)</td>
+                                <td class="num">1 650 €</td>
+                            </tr>
+                            <tr class="subtotal">
+                                <td>Sous-total temps homme</td>
+                                <td></td>
+                                <td></td>
+                                <td class="num">33</td>
+                                <td class="num">14</td>
+                                <td class="num">47</td>
+                                <td class="num">36 505 €</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section>
+                <div class="section-title">
+                    <h2>2. PRESTATIONS ÉVÉNEMENT (refacturées au réel - marge 0%)</h2>
+                    <div class="section-total">181 020 €</div>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Poste</th>
+                                <th class="num">Montant brut fournisseur (EUR)</th>
+                                <th class="num">Savings négocié (EUR)</th>
+                                <th class="num">Montant net refacturé (EUR)</th>
+                                <th>Détails / Quantité</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="label">Location lieu prestige (2 jours)</td>
+                                <td class="num">32 000 €</td>
+                                <td class="num">4 000 €</td>
+                                <td class="num">28 000 €</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td class="label">Production scénique (scène, son, lumière, vidéo, régie)</td>
+                                <td class="num">38 000 €</td>
+                                <td class="num">4 500 €</td>
+                                <td class="num">33 500 €</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td class="label">Traiteur - Dîner de gala (300 couverts)</td>
+                                <td class="num">25 500 €</td>
+                                <td class="num">2 700 €</td>
+                                <td class="num">22 800 €</td>
+                                <td>85,00 € x 300</td>
+                            </tr>
+                            <tr>
+                                <td class="label">Traiteur - Autres repas convention (déjeuners, pauses)</td>
+                                <td class="num">27 000 €</td>
+                                <td class="num">800 €</td>
+                                <td class="num">26 200 €</td>
+                                <td>45,00 € x 600</td>
+                            </tr>
+                            <tr>
+                                <td class="label">Hébergement (150 chambres twins x 1 nuit)</td>
+                                <td class="num">42 000 €</td>
+                                <td class="num">3 500 €</td>
+                                <td class="num">38 500 €</td>
+                                <td>280,00 € x 150</td>
+                            </tr>
+                            <tr>
+                                <td class="label">Rétrocommission hébergement (-10%, reversée au client)</td>
+                                <td class="num"></td>
+                                <td class="num"></td>
+                                <td class="num negative">-4 200 €</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td class="label">Transport (navettes & transferts)</td>
+                                <td class="num">9 000 €</td>
+                                <td class="num">800 €</td>
+                                <td class="num">8 200 €</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td class="label">Animation & artistes (gala)</td>
+                                <td class="num">14 000 €</td>
+                                <td class="num">1 000 €</td>
+                                <td class="num">13 000 €</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td class="label">Impression badges</td>
+                                <td class="num">750 €</td>
+                                <td class="num">100 €</td>
+                                <td class="num">650 €</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td class="label">Hôtesses & Sécurité</td>
+                                <td class="num">2 200 €</td>
+                                <td class="num">150 €</td>
+                                <td class="num">2 050 €</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td class="label">Décoration / scénographie / sécurité</td>
+                                <td class="num">10 000 €</td>
+                                <td class="num">1 200 €</td>
+                                <td class="num">8 800 €</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td class="label">VHR équipe - Transport (location 2 véhicules + péages/essence)</td>
+                                <td class="num">2 200 €</td>
+                                <td class="num">-</td>
+                                <td class="num">2 200 €</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td class="label">VHR équipe - Hébergement (6 weevers x 1 nuit)</td>
+                                <td class="num">840 €</td>
+                                <td class="num">-</td>
+                                <td class="num">840 €</td>
+                                <td>140,00 € x 6</td>
+                            </tr>
+                            <tr>
+                                <td class="label">VHR équipe - Restauration (6 weevers x 2 jours)</td>
+                                <td class="num">480 €</td>
+                                <td class="num">-</td>
+                                <td class="num">480 €</td>
+                                <td>40,00 € x 12</td>
+                            </tr>
+                            <tr>
+                                <td class="label">Bilan carbone de l'événement (à chiffrer)</td>
+                                <td class="num"></td>
+                                <td class="num"></td>
+                                <td class="num"></td>
+                                <td></td>
+                            </tr>
+                            <tr class="subtotal">
+                                <td>Sous-total prestations</td>
+                                <td class="num">203 970 €</td>
+                                <td class="num">18 750 €</td>
+                                <td class="num">181 020 €</td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section>
+                <div class="section-title">
+                    <h2>3. SYNTHÈSE DE RÉMUNÉRATION & FACTURATION</h2>
+                    <div class="section-total">241 018 € HT</div>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Poste</th>
+                                <th>Base / Taux</th>
+                                <th class="num">Montant (EUR)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="label">Prestations refacturées (net, marge 0%)</td>
+                                <td>Au réel</td>
+                                <td class="num">217 525 €</td>
+                            </tr>
+                            <tr>
+                                <td class="label">Honoraires agence</td>
+                                <td>6% (event &gt; 100K)</td>
+                                <td class="num">13 052 €</td>
+                            </tr>
+                            <tr>
+                                <td class="label">Assurance</td>
+                                <td>0,8%</td>
+                                <td class="num">1 740 €</td>
+                            </tr>
+                            <tr>
+                                <td class="label">Frais de portage</td>
+                                <td>4% (0% si carte logée)</td>
+                                <td class="num">8 701 €</td>
+                            </tr>
+                            <tr>
+                                <td class="label">Phase amont (conseil / conception)</td>
+                                <td>-</td>
+                                <td class="num">-</td>
+                            </tr>
+                            <tr class="total-ht">
+                                <td>TOTAL HT</td>
+                                <td></td>
+                                <td class="num">241 018 €</td>
+                            </tr>
+                            <tr>
+                                <td class="label">TVA 20%</td>
+                                <td></td>
+                                <td class="num">48 204 €</td>
+                            </tr>
+                            <tr class="total-ttc">
+                                <td>TOTAL TTC</td>
+                                <td></td>
+                                <td class="num">289 221 €</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section>
+                <div class="section-title">
+                    <h2>4. ÉCHÉANCIER & CONDITIONS</h2>
+                </div>
+                <div class="conditions">
+                    <div class="condition">
+                        <h3>Acompte à la commande</h3>
+                        <p>30% à la commande (plafond légal)</p>
+                        <strong>86 766 €</strong>
+                    </div>
+                    <div class="condition">
+                        <h3>Solde (facture unique)</h3>
+                        <p>Solde à 45 jours fin de mois</p>
+                        <strong>202 455 €</strong>
+                    </div>
+                    <div class="condition">
+                        <h3>Savings pour KPMG</h3>
+                        <p>Remises & gratuités négociées, reversées à 100%</p>
+                        <strong class="saving">18 750 €</strong>
+                    </div>
+                </div>
+            </section>
+
+            <footer>
+                <span>WEEVUP x KPMG - EXEMPLE DE BUDGET (LOT 2)</span>
+                <span>Cas 3 : Convention annuelle + soirée de gala - 300 participants - lieu prestige</span>
+            </footer>
+        </main>
+    </div>
 </body>
 
 </html>
